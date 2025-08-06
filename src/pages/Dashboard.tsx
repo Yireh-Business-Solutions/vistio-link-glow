@@ -55,6 +55,46 @@ const Dashboard = () => {
     }
   };
 
+  const handleViewCard = (card: any) => {
+    // Navigate to the public card view
+    const slug = card.slug || card.id;
+    window.open(`/card/${slug}`, '_blank');
+  };
+
+  const handleEditCard = (card: any) => {
+    // You can implement edit functionality here
+    toast({
+      title: "Edit functionality",
+      description: "Edit functionality will be implemented soon."
+    });
+  };
+
+  const handleShareCard = (card: any) => {
+    const slug = card.slug || card.id;
+    const url = `${window.location.origin}/card/${slug}`;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: `${card.name}'s Business Card`,
+        text: `Check out ${card.name}'s digital business card`,
+        url: url
+      });
+    } else {
+      // Fallback to copying to clipboard
+      navigator.clipboard.writeText(url).then(() => {
+        toast({
+          title: "Link copied!",
+          description: "The card link has been copied to your clipboard."
+        });
+      }).catch(() => {
+        toast({
+          title: "Share link",
+          description: url,
+        });
+      });
+    }
+  };
+
   const getThemeColor = (theme: string | null) => {
     const themes = {
       'neon-blue': 'hsl(195 100% 50%)',
@@ -215,15 +255,29 @@ const Dashboard = () => {
                         </div>
 
                         <div className="flex gap-2">
-                          <Button size="sm" variant="outline" className="flex-1">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="flex-1"
+                            onClick={() => handleEditCard(card)}
+                          >
                             <Edit className="h-3 w-3 mr-1" />
                             Edit
                           </Button>
-                          <Button size="sm" variant="outline" className="flex-1">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="flex-1"
+                            onClick={() => handleShareCard(card)}
+                          >
                             <Share className="h-3 w-3 mr-1" />
                             Share
                           </Button>
-                          <Button size="sm" variant="outline">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleViewCard(card)}
+                          >
                             <Eye className="h-3 w-3" />
                           </Button>
                           <Button 
