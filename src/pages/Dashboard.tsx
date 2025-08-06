@@ -1,300 +1,243 @@
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { 
+  CreditCard, 
+  Users, 
+  Mail, 
+  QrCode, 
+  BarChart3, 
+  Plus, 
+  Settings, 
+  LogOut,
+  Sparkles
+} from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-import { Sparkles, Plus, CreditCard, Users, Mail, BarChart } from "lucide-react";
-import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 const Dashboard = () => {
-  const [user, setUser] = useState<SupabaseUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState("cards");
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session?.user) {
-        navigate('/auth');
-        return;
-      }
-      
-      setUser(session.user);
-      setLoading(false);
-    };
-
-    checkAuth();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session?.user) {
-        navigate('/auth');
-      } else {
-        setUser(session.user);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast({
-        title: "Error signing out",
-        description: error.message,
-        variant: "destructive"
-      });
-    }
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <Sparkles className="h-8 w-8 text-primary mx-auto animate-pulse" />
-          <p className="text-muted-foreground">Loading your dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-hero">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <Sparkles className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold">Vistio</span>
+            <Sparkles className="h-8 w-8 text-neon-blue" />
+            <span className="text-2xl font-bold text-foreground">Vistio</span>
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-muted-foreground">
-              Welcome, {user?.user_metadata?.name || user?.email}
+              Welcome, {user?.email}
             </span>
-            <Button variant="outline" onClick={signOut}>
+            <Button variant="outline" size="sm" onClick={handleSignOut}>
+              <LogOut className="h-4 w-4 mr-2" />
               Sign Out
             </Button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Welcome Section */}
+      <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
+          <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2">
+            Dashboard
+          </h1>
           <p className="text-muted-foreground">
-            Manage your digital business cards and track your networking success.
+            Manage your digital business cards and connections
           </p>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Cards</CardTitle>
-              <CreditCard className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">No cards created yet</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Views</CardTitle>
-              <BarChart className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">Card views this month</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">New Contacts</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">Contacts captured</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Email Signatures</CardTitle>
-              <Mail className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">Generated signatures</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Main Content */}
-        <Tabs defaultValue="cards" className="space-y-6">
-          <TabsList className="grid w-full md:w-auto grid-cols-5">
-            <TabsTrigger value="cards">My Cards</TabsTrigger>
-            <TabsTrigger value="contacts">Contacts</TabsTrigger>
-            <TabsTrigger value="resources">Resources</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5 lg:w-fit">
+            <TabsTrigger value="cards" className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4" />
+              My Cards
+            </TabsTrigger>
+            <TabsTrigger value="contacts" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Contacts
+            </TabsTrigger>
+            <TabsTrigger value="resources" className="flex items-center gap-2">
+              <Mail className="h-4 w-4" />
+              Resources
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Analytics
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="flex items-center gap-2">
+              <Settings className="h-4 w-4" />
+              Settings
+            </TabsTrigger>
           </TabsList>
 
+          {/* My Cards Tab */}
           <TabsContent value="cards" className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-semibold">My Cards</h2>
-                <p className="text-muted-foreground">Create and manage your digital business cards</p>
-              </div>
-              <Button className="shadow-neon hover:shadow-glow transition-all duration-300">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold">My Business Cards</h2>
+              <Button className="bg-gradient-primary hover:shadow-neon transition-all duration-300">
                 <Plus className="h-4 w-4 mr-2" />
-                Create Card
+                Create New Card
               </Button>
             </div>
-            
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <CreditCard className="h-16 w-16 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No cards yet</h3>
-                <p className="text-muted-foreground text-center mb-6">
-                  Create your first digital business card to start networking professionally.
-                </p>
-                <Button className="shadow-neon hover:shadow-glow transition-all duration-300">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Your First Card
-                </Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
-          <TabsContent value="contacts" className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-semibold">Contacts</h2>
-              <p className="text-muted-foreground">People who have shared their information with you</p>
-            </div>
-            
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <Users className="h-16 w-16 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No contacts yet</h3>
-                <p className="text-muted-foreground text-center">
-                  Contacts will appear here when people share their information through your cards.
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="resources" className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-semibold">Resources</h2>
-              <p className="text-muted-foreground">Email signatures, virtual backgrounds, and QR codes</p>
-            </div>
-            
-            <div className="grid md:grid-cols-3 gap-6">
-              <Card>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {/* Placeholder Card */}
+              <Card className="bg-card/50 backdrop-blur-sm border-border hover:border-neon-blue transition-all duration-300 hover:shadow-neon">
                 <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Mail className="h-5 w-5 mr-2" />
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle className="text-lg">Your First Card</CardTitle>
+                      <CardDescription>Create your digital business card</CardDescription>
+                    </div>
+                    <Badge variant="secondary">Draft</Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="h-20 bg-gradient-primary rounded-lg flex items-center justify-center">
+                      <span className="text-white font-semibold">Preview</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" className="flex-1">
+                        Edit
+                      </Button>
+                      <Button size="sm" variant="outline" className="flex-1">
+                        Share
+                      </Button>
+                      <Button size="sm" variant="outline">
+                        <QrCode className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Contacts Tab */}
+          <TabsContent value="contacts" className="space-y-6">
+            <h2 className="text-2xl font-semibold">Contacts & Connections</h2>
+            <Card className="bg-card/50 backdrop-blur-sm border-border">
+              <CardContent className="p-6">
+                <div className="text-center py-12">
+                  <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">No contacts yet</h3>
+                  <p className="text-muted-foreground">
+                    When people share their information through your business card, they'll appear here.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Resources Tab */}
+          <TabsContent value="resources" className="space-y-6">
+            <h2 className="text-2xl font-semibold">Signature & Resources</h2>
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card className="bg-card/50 backdrop-blur-sm border-border">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Mail className="h-5 w-5 text-neon-blue" />
                     Email Signature
                   </CardTitle>
                   <CardDescription>
-                    Professional email signature with your card info
+                    Professional email signature based on your card
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button variant="outline" className="w-full" disabled>
+                  <Button variant="outline" className="w-full">
                     Generate Signature
                   </Button>
-                  <p className="text-xs text-muted-foreground mt-2">Create a card first</p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="bg-card/50 backdrop-blur-sm border-border">
                 <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <BarChart className="h-5 w-5 mr-2" />
-                    Virtual Background
+                  <CardTitle className="flex items-center gap-2">
+                    <QrCode className="h-5 w-5 text-neon-green" />
+                    QR Code
                   </CardTitle>
                   <CardDescription>
-                    Zoom/Teams background with your branding
+                    Download QR code for your business card
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button variant="outline" className="w-full" disabled>
-                    Download Background
-                  </Button>
-                  <p className="text-xs text-muted-foreground mt-2">Create a card first</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <CreditCard className="h-5 w-5 mr-2" />
-                    QR Codes
-                  </CardTitle>
-                  <CardDescription>
-                    Downloadable QR codes for your cards
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button variant="outline" className="w-full" disabled>
+                  <Button variant="outline" className="w-full">
                     Download QR Code
                   </Button>
-                  <p className="text-xs text-muted-foreground mt-2">Create a card first</p>
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
 
+          {/* Analytics Tab */}
           <TabsContent value="analytics" className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-semibold">Analytics</h2>
-              <p className="text-muted-foreground">Track your networking performance</p>
+            <h2 className="text-2xl font-semibold">Analytics</h2>
+            <div className="grid gap-6 md:grid-cols-3">
+              <Card className="bg-card/50 backdrop-blur-sm border-border">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium">Card Views</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-neon-blue">0</div>
+                  <p className="text-xs text-muted-foreground">This month</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-card/50 backdrop-blur-sm border-border">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium">New Contacts</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-neon-green">0</div>
+                  <p className="text-xs text-muted-foreground">This month</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-card/50 backdrop-blur-sm border-border">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium">Share Rate</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-neon-purple">0%</div>
+                  <p className="text-xs text-muted-foreground">This month</p>
+                </CardContent>
+              </Card>
             </div>
-            
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <BarChart className="h-16 w-16 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No data yet</h3>
-                <p className="text-muted-foreground text-center">
-                  Analytics will appear here once you create cards and start sharing them.
-                </p>
-              </CardContent>
-            </Card>
           </TabsContent>
 
+          {/* Settings Tab */}
           <TabsContent value="settings" className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-semibold">Settings</h2>
-              <p className="text-muted-foreground">Manage your account and preferences</p>
-            </div>
-            
-            <Card>
+            <h2 className="text-2xl font-semibold">Settings</h2>
+            <Card className="bg-card/50 backdrop-blur-sm border-border">
               <CardHeader>
-                <CardTitle>Account Information</CardTitle>
+                <CardTitle>Account Settings</CardTitle>
+                <CardDescription>
+                  Manage your account preferences and settings
+                </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium">Email</label>
-                  <p className="text-sm text-muted-foreground">{user?.email}</p>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium">Email</label>
+                    <p className="text-sm text-muted-foreground">{user?.email}</p>
+                  </div>
+                  <Button variant="outline">
+                    Update Profile
+                  </Button>
                 </div>
-                <div>
-                  <label className="text-sm font-medium">Name</label>
-                  <p className="text-sm text-muted-foreground">
-                    {user?.user_metadata?.name || "Not set"}
-                  </p>
-                </div>
-                <Button variant="outline">Update Profile</Button>
               </CardContent>
             </Card>
           </TabsContent>
