@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { 
   CreditCard, 
   Users, 
@@ -12,19 +13,55 @@ import {
   Plus, 
   Settings, 
   LogOut,
-  Sparkles
+  Sparkles,
+  Edit,
+  Share,
+  Trash2,
+  Eye
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useCards } from "@/hooks/useCards";
+import CreateCardForm from "@/components/cards/CreateCardForm";
+import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const { cards, loading, refetch, deleteCard } = useCards();
   const [activeTab, setActiveTab] = useState("cards");
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
+  };
+
+  const handleDeleteCard = async (cardId: string) => {
+    const result = await deleteCard(cardId);
+    if (result.success) {
+      toast({
+        title: "Card deleted",
+        description: "Your business card has been deleted successfully."
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: result.error || "Failed to delete card",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const getThemeColor = (theme: string | null) => {
+    const themes = {
+      'neon-blue': 'hsl(195 100% 50%)',
+      'neon-green': 'hsl(120 100% 50%)',
+      'neon-purple': 'hsl(280 100% 70%)',
+      'neon-pink': 'hsl(320 100% 70%)'
+    };
+    return themes[(theme || 'neon-blue') as keyof typeof themes] || themes['neon-blue'];
   };
 
   return (
@@ -86,44 +123,123 @@ const Dashboard = () => {
           <TabsContent value="cards" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold">My Business Cards</h2>
-              <Button className="bg-gradient-primary hover:shadow-neon transition-all duration-300">
-                <Plus className="h-4 w-4 mr-2" />
-                Create New Card
-              </Button>
+              <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
+                <DialogTrigger asChild>
+                  <Button className="bg-gradient-primary hover:shadow-neon transition-all duration-300">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create New Card
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto bg-gradient-hero">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl bg-gradient-primary bg-clip-text text-transparent">
+                      Create New Business Card
+                    </DialogTitle>
+                  </DialogHeader>
+                  <CreateCardForm 
+                    onSuccess={() => {
+                      setShowCreateForm(false);
+                      refetch();
+                    }}
+                    onCancel={() => setShowCreateForm(false)}
+                  />
+                </DialogContent>
+              </Dialog>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {/* Placeholder Card */}
-              <Card className="bg-card/50 backdrop-blur-sm border-border hover:border-neon-blue transition-all duration-300 hover:shadow-neon">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-lg">Your First Card</CardTitle>
-                      <CardDescription>Create your digital business card</CardDescription>
-                    </div>
-                    <Badge variant="secondary">Draft</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="h-20 bg-gradient-primary rounded-lg flex items-center justify-center">
-                      <span className="text-white font-semibold">Preview</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="flex-1">
-                        Edit
-                      </Button>
-                      <Button size="sm" variant="outline" className="flex-1">
-                        Share
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        <QrCode className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-blue mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Loading your cards...</p>
+              </div>
+            ) : cards.length === 0 ? (
+              <Card className="bg-card/50 backdrop-blur-sm border-border">
+                <CardContent className="p-12 text-center">
+                  <CreditCard className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">No cards yet</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Create your first digital business card to get started.
+                  </p>
+                  <Button 
+                    onClick={() => setShowCreateForm(true)}
+                    className="bg-gradient-primary hover:shadow-neon transition-all duration-300"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Your First Card
+                  </Button>
                 </CardContent>
               </Card>
-            </div>
+            ) : (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {cards.map((card) => (
+                  <Card 
+                    key={card.id}
+                    className="bg-card/50 backdrop-blur-sm border-border hover:border-neon-blue transition-all duration-300 hover:shadow-neon"
+                  >
+                    <CardHeader>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <CardTitle className="text-lg">{card.name}</CardTitle>
+                          <CardDescription>
+                            {card.title} {card.company && `at ${card.company}`}
+                          </CardDescription>
+                        </div>
+                        {card.is_primary && (
+                          <Badge 
+                            variant="outline" 
+                            style={{ borderColor: getThemeColor(card.color_theme) }}
+                          >
+                            Primary
+                          </Badge>
+                        )}
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div 
+                          className="h-20 rounded-lg border-2 flex items-center justify-center"
+                          style={{ 
+                            borderColor: getThemeColor(card.color_theme),
+                            boxShadow: `0 0 10px ${getThemeColor(card.color_theme)}30`
+                          }}
+                        >
+                          <span className="font-semibold" style={{ color: getThemeColor(card.color_theme) }}>
+                            {card.name}
+                          </span>
+                        </div>
+                        
+                        <div className="text-sm text-muted-foreground">
+                          <p>Views: {card.view_count || 0}</p>
+                          <p>Created: {new Date(card.created_at).toLocaleDateString()}</p>
+                        </div>
+
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline" className="flex-1">
+                            <Edit className="h-3 w-3 mr-1" />
+                            Edit
+                          </Button>
+                          <Button size="sm" variant="outline" className="flex-1">
+                            <Share className="h-3 w-3 mr-1" />
+                            Share
+                          </Button>
+                          <Button size="sm" variant="outline">
+                            <Eye className="h-3 w-3" />
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleDeleteCard(card.id)}
+                            className="hover:border-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </TabsContent>
 
           {/* Contacts Tab */}
