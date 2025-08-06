@@ -27,8 +27,53 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          image_1_url: string | null
+          image_2_url: string | null
+          image_3_url: string | null
+          image_4_url: string | null
+          image_5_url: string | null
           instagram_url: string | null
           is_primary: boolean | null
+          link_1_title: string | null
+          link_1_url: string | null
+          link_10_title: string | null
+          link_10_url: string | null
+          link_11_title: string | null
+          link_11_url: string | null
+          link_12_title: string | null
+          link_12_url: string | null
+          link_13_title: string | null
+          link_13_url: string | null
+          link_14_title: string | null
+          link_14_url: string | null
+          link_15_title: string | null
+          link_15_url: string | null
+          link_16_title: string | null
+          link_16_url: string | null
+          link_17_title: string | null
+          link_17_url: string | null
+          link_18_title: string | null
+          link_18_url: string | null
+          link_19_title: string | null
+          link_19_url: string | null
+          link_2_title: string | null
+          link_2_url: string | null
+          link_20_title: string | null
+          link_20_url: string | null
+          link_3_title: string | null
+          link_3_url: string | null
+          link_4_title: string | null
+          link_4_url: string | null
+          link_5_title: string | null
+          link_5_url: string | null
+          link_6_title: string | null
+          link_6_url: string | null
+          link_7_title: string | null
+          link_7_url: string | null
+          link_8_title: string | null
+          link_8_url: string | null
+          link_9_title: string | null
+          link_9_url: string | null
           linkedin_url: string | null
           name: string
           org_id: string | null
@@ -57,8 +102,53 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          image_1_url?: string | null
+          image_2_url?: string | null
+          image_3_url?: string | null
+          image_4_url?: string | null
+          image_5_url?: string | null
           instagram_url?: string | null
           is_primary?: boolean | null
+          link_1_title?: string | null
+          link_1_url?: string | null
+          link_10_title?: string | null
+          link_10_url?: string | null
+          link_11_title?: string | null
+          link_11_url?: string | null
+          link_12_title?: string | null
+          link_12_url?: string | null
+          link_13_title?: string | null
+          link_13_url?: string | null
+          link_14_title?: string | null
+          link_14_url?: string | null
+          link_15_title?: string | null
+          link_15_url?: string | null
+          link_16_title?: string | null
+          link_16_url?: string | null
+          link_17_title?: string | null
+          link_17_url?: string | null
+          link_18_title?: string | null
+          link_18_url?: string | null
+          link_19_title?: string | null
+          link_19_url?: string | null
+          link_2_title?: string | null
+          link_2_url?: string | null
+          link_20_title?: string | null
+          link_20_url?: string | null
+          link_3_title?: string | null
+          link_3_url?: string | null
+          link_4_title?: string | null
+          link_4_url?: string | null
+          link_5_title?: string | null
+          link_5_url?: string | null
+          link_6_title?: string | null
+          link_6_url?: string | null
+          link_7_title?: string | null
+          link_7_url?: string | null
+          link_8_title?: string | null
+          link_8_url?: string | null
+          link_9_title?: string | null
+          link_9_url?: string | null
           linkedin_url?: string | null
           name: string
           org_id?: string | null
@@ -87,8 +177,53 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          image_1_url?: string | null
+          image_2_url?: string | null
+          image_3_url?: string | null
+          image_4_url?: string | null
+          image_5_url?: string | null
           instagram_url?: string | null
           is_primary?: boolean | null
+          link_1_title?: string | null
+          link_1_url?: string | null
+          link_10_title?: string | null
+          link_10_url?: string | null
+          link_11_title?: string | null
+          link_11_url?: string | null
+          link_12_title?: string | null
+          link_12_url?: string | null
+          link_13_title?: string | null
+          link_13_url?: string | null
+          link_14_title?: string | null
+          link_14_url?: string | null
+          link_15_title?: string | null
+          link_15_url?: string | null
+          link_16_title?: string | null
+          link_16_url?: string | null
+          link_17_title?: string | null
+          link_17_url?: string | null
+          link_18_title?: string | null
+          link_18_url?: string | null
+          link_19_title?: string | null
+          link_19_url?: string | null
+          link_2_title?: string | null
+          link_2_url?: string | null
+          link_20_title?: string | null
+          link_20_url?: string | null
+          link_3_title?: string | null
+          link_3_url?: string | null
+          link_4_title?: string | null
+          link_4_url?: string | null
+          link_5_title?: string | null
+          link_5_url?: string | null
+          link_6_title?: string | null
+          link_6_url?: string | null
+          link_7_title?: string | null
+          link_7_url?: string | null
+          link_8_title?: string | null
+          link_8_url?: string | null
+          link_9_title?: string | null
+          link_9_url?: string | null
           linkedin_url?: string | null
           name?: string
           org_id?: string | null
