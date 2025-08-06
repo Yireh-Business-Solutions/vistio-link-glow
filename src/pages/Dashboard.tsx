@@ -23,6 +23,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useCards } from "@/hooks/useCards";
 import CreateCardForm from "@/components/cards/CreateCardForm";
+import ResourcesGenerator from "@/components/resources/ResourcesGenerator";
 import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
@@ -261,41 +262,26 @@ const Dashboard = () => {
           {/* Resources Tab */}
           <TabsContent value="resources" className="space-y-6">
             <h2 className="text-2xl font-semibold">Signature & Resources</h2>
-            <div className="grid gap-6 md:grid-cols-2">
+            {cards.length === 0 ? (
               <Card className="bg-card/50 backdrop-blur-sm border-border">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Mail className="h-5 w-5 text-neon-blue" />
-                    Email Signature
-                  </CardTitle>
-                  <CardDescription>
-                    Professional email signature based on your card
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button variant="outline" className="w-full">
-                    Generate Signature
+                <CardContent className="p-12 text-center">
+                  <Mail className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">No cards available</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Create a business card first to generate email signatures and resources.
+                  </p>
+                  <Button 
+                    onClick={() => setShowCreateForm(true)}
+                    className="bg-gradient-primary hover:shadow-neon transition-all duration-300"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Your First Card
                   </Button>
                 </CardContent>
               </Card>
-
-              <Card className="bg-card/50 backdrop-blur-sm border-border">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <QrCode className="h-5 w-5 text-neon-green" />
-                    QR Code
-                  </CardTitle>
-                  <CardDescription>
-                    Download QR code for your business card
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button variant="outline" className="w-full">
-                    Download QR Code
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
+            ) : (
+              <ResourcesGenerator card={cards[0]} />
+            )}
           </TabsContent>
 
           {/* Analytics Tab */}
