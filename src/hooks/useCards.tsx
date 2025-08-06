@@ -12,6 +12,8 @@ export interface Card {
   company: string | null;
   email: string | null;
   phone: string | null;
+  work_phone: string | null;
+  whatsapp: string | null;
   address: string | null;
   website: string | null;
   linkedin_url: string | null;
@@ -20,7 +22,11 @@ export interface Card {
   bio: string | null;
   profile_image_url: string | null;
   company_logo_url: string | null;
+  company_logo: string | null;
   color_theme: string | null;
+  certifications: string | null;
+  awards: string | null;
+  specialties: string | null;
   is_primary: boolean | null;
   view_count: number | null;
   created_at: string;

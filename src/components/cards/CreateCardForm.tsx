@@ -18,11 +18,19 @@ interface CardData {
   company: string;
   email: string;
   phone: string;
+  work_phone?: string;
+  whatsapp?: string;
   address: string;
   website: string;
   linkedin_url: string;
   twitter_url: string;
   instagram_url: string;
+  bio?: string;
+  certifications?: string;
+  awards?: string;
+  specialties?: string;
+  profile_image_url?: string;
+  company_logo_url?: string;
   color_theme: string;
 }
 
@@ -41,11 +49,17 @@ const CreateCardForm = ({ onSuccess, onCancel }: CreateCardFormProps) => {
     company: "",
     email: "",
     phone: "",
+    work_phone: "",
+    whatsapp: "",
     address: "",
     website: "",
     linkedin_url: "",
     twitter_url: "",
     instagram_url: "",
+    bio: "",
+    certifications: "",
+    awards: "",
+    specialties: "",
     color_theme: "neon-blue"
   });
 

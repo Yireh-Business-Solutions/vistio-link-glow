@@ -17,9 +17,12 @@ export type Database = {
       cards: {
         Row: {
           address: string | null
+          awards: string | null
           bio: string | null
+          certifications: string | null
           color_theme: string | null
           company: string | null
+          company_logo: string | null
           company_logo_url: string | null
           created_at: string
           email: string | null
@@ -32,18 +35,24 @@ export type Database = {
           phone: string | null
           profile_image_url: string | null
           slug: string | null
+          specialties: string | null
           title: string | null
           twitter_url: string | null
           updated_at: string
           user_id: string
           view_count: number | null
           website: string | null
+          whatsapp: string | null
+          work_phone: string | null
         }
         Insert: {
           address?: string | null
+          awards?: string | null
           bio?: string | null
+          certifications?: string | null
           color_theme?: string | null
           company?: string | null
+          company_logo?: string | null
           company_logo_url?: string | null
           created_at?: string
           email?: string | null
@@ -56,18 +65,24 @@ export type Database = {
           phone?: string | null
           profile_image_url?: string | null
           slug?: string | null
+          specialties?: string | null
           title?: string | null
           twitter_url?: string | null
           updated_at?: string
           user_id: string
           view_count?: number | null
           website?: string | null
+          whatsapp?: string | null
+          work_phone?: string | null
         }
         Update: {
           address?: string | null
+          awards?: string | null
           bio?: string | null
+          certifications?: string | null
           color_theme?: string | null
           company?: string | null
+          company_logo?: string | null
           company_logo_url?: string | null
           created_at?: string
           email?: string | null
@@ -80,12 +95,15 @@ export type Database = {
           phone?: string | null
           profile_image_url?: string | null
           slug?: string | null
+          specialties?: string | null
           title?: string | null
           twitter_url?: string | null
           updated_at?: string
           user_id?: string
           view_count?: number | null
           website?: string | null
+          whatsapp?: string | null
+          work_phone?: string | null
         }
         Relationships: [
           {
