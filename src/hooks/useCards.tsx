@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -40,7 +41,10 @@ export const useCards = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchCards = async () => {
+    console.log("fetchCards called, user:", user?.id);
+    
     if (!user) {
+      console.log("No user found, setting empty cards");
       setCards([]);
       setLoading(false);
       return;
@@ -50,18 +54,24 @@ export const useCards = () => {
     setError(null);
 
     try {
+      console.log("Fetching cards for user:", user.id);
       const { data, error } = await supabase
         .from('cards')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
+      console.log("Cards query result:", { data, error });
+
       if (error) {
+        console.error("Error fetching cards:", error);
         setError(error.message);
       } else {
+        console.log("Successfully fetched cards:", data?.length || 0, "cards");
         setCards(data || []);
       }
     } catch (err) {
+      console.error("Unexpected error fetching cards:", err);
       setError('Failed to fetch cards');
     } finally {
       setLoading(false);
@@ -69,6 +79,7 @@ export const useCards = () => {
   };
 
   useEffect(() => {
+    console.log("useCards useEffect triggered, user changed:", user?.id);
     fetchCards();
   }, [user]);
 

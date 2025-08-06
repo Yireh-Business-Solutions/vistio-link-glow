@@ -118,11 +118,17 @@ const CreateCardForm = ({ onSuccess, onCancel }: CreateCardFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user) {
+      console.error("No user found when trying to create card");
+      return;
+    }
 
+    console.log("Starting card creation for user:", user.id);
     setIsLoading(true);
+    
     try {
       const slug = generateSlug(formData.name);
+      console.log("Generated slug:", slug);
       
       // Prepare links data for database
       const linksData: any = {};
@@ -132,23 +138,32 @@ const CreateCardForm = ({ onSuccess, onCancel }: CreateCardFormProps) => {
           linksData[`link_${index + 1}_url`] = link.url;
         }
       });
+
+      const cardData = {
+        user_id: user.id,
+        slug,
+        ...formData,
+        ...linksData
+      };
+
+      console.log("Inserting card data:", cardData);
       
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('cards')
-        .insert({
-          user_id: user.id,
-          slug,
-          ...formData,
-          ...linksData
-        });
+        .insert(cardData)
+        .select();
+
+      console.log("Card insertion result:", { data, error });
 
       if (error) {
+        console.error("Database error creating card:", error);
         toast({
           title: "Error creating card",
           description: error.message,
           variant: "destructive"
         });
       } else {
+        console.log("Card created successfully:", data);
         toast({
           title: "Card created successfully!",
           description: "Your digital business card is ready to share."
@@ -156,6 +171,7 @@ const CreateCardForm = ({ onSuccess, onCancel }: CreateCardFormProps) => {
         onSuccess?.();
       }
     } catch (error) {
+      console.error("Unexpected error creating card:", error);
       toast({
         title: "Unexpected error",
         description: "Please try again later.",
