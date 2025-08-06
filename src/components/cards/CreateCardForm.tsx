@@ -7,10 +7,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Save, Eye, Share, User, Mail, Phone, MapPin, Globe, Linkedin, Twitter, Instagram } from "lucide-react";
+import { Save, Eye, Share, User, Mail, Phone, MapPin, Globe, Linkedin, Twitter, Instagram, Plus, X } from "lucide-react";
+import ImageUpload from "./ImageUpload";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+
+interface LinkData {
+  title: string;
+  url: string;
+}
 
 interface CardData {
   name: string;
@@ -31,6 +37,11 @@ interface CardData {
   specialties?: string;
   profile_image_url?: string;
   company_logo_url?: string;
+  image_1_url?: string;
+  image_2_url?: string;
+  image_3_url?: string;
+  image_4_url?: string;
+  image_5_url?: string;
   color_theme: string;
 }
 
@@ -63,6 +74,8 @@ const CreateCardForm = ({ onSuccess, onCancel }: CreateCardFormProps) => {
     color_theme: "neon-blue"
   });
 
+  const [customLinks, setCustomLinks] = useState<LinkData[]>([]);
+
   const colorThemes = [
     { value: "neon-blue", label: "Neon Blue", color: "hsl(195 100% 50%)" },
     { value: "neon-green", label: "Neon Green", color: "hsl(120 100% 50%)" },
@@ -82,6 +95,23 @@ const CreateCardForm = ({ onSuccess, onCancel }: CreateCardFormProps) => {
       .substring(0, 50);
   };
 
+  const addCustomLink = () => {
+    if (customLinks.length < 20) {
+      setCustomLinks([...customLinks, { title: "", url: "" }]);
+    }
+  };
+
+  const removeCustomLink = (index: number) => {
+    setCustomLinks(customLinks.filter((_, i) => i !== index));
+  };
+
+  const updateCustomLink = (index: number, field: keyof LinkData, value: string) => {
+    const updated = customLinks.map((link, i) => 
+      i === index ? { ...link, [field]: value } : link
+    );
+    setCustomLinks(updated);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -90,12 +120,22 @@ const CreateCardForm = ({ onSuccess, onCancel }: CreateCardFormProps) => {
     try {
       const slug = generateSlug(formData.name);
       
+      // Prepare links data for database
+      const linksData: any = {};
+      customLinks.forEach((link, index) => {
+        if (link.title && link.url) {
+          linksData[`link_${index + 1}_title`] = link.title;
+          linksData[`link_${index + 1}_url`] = link.url;
+        }
+      });
+      
       const { error } = await supabase
         .from('cards')
         .insert({
           user_id: user.id,
           slug,
-          ...formData
+          ...formData,
+          ...linksData
         });
 
       if (error) {
@@ -295,6 +335,174 @@ const CreateCardForm = ({ onSuccess, onCancel }: CreateCardFormProps) => {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Additional Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Professional Details</h3>
+              
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label htmlFor="bio">Bio</Label>
+                  <Textarea
+                    id="bio"
+                    value={formData.bio}
+                    onChange={(e) => handleInputChange('bio', e.target.value)}
+                    placeholder="Tell people about yourself..."
+                    className="min-h-[80px]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="work_phone">Work Phone</Label>
+                    <Input
+                      id="work_phone"
+                      type="tel"
+                      value={formData.work_phone}
+                      onChange={(e) => handleInputChange('work_phone', e.target.value)}
+                      placeholder="+1 (555) 987-6543"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="whatsapp">WhatsApp</Label>
+                    <Input
+                      id="whatsapp"
+                      type="tel"
+                      value={formData.whatsapp}
+                      onChange={(e) => handleInputChange('whatsapp', e.target.value)}
+                      placeholder="+1 (555) 123-4567"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="certifications">Certifications (comma-separated)</Label>
+                  <Input
+                    id="certifications"
+                    value={formData.certifications}
+                    onChange={(e) => handleInputChange('certifications', e.target.value)}
+                    placeholder="AWS Certified, PMP, etc."
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="awards">Awards (comma-separated)</Label>
+                  <Input
+                    id="awards"
+                    value={formData.awards}
+                    onChange={(e) => handleInputChange('awards', e.target.value)}
+                    placeholder="Employee of the Year, Innovation Award, etc."
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="specialties">Specialties (comma-separated)</Label>
+                  <Input
+                    id="specialties"
+                    value={formData.specialties}
+                    onChange={(e) => handleInputChange('specialties', e.target.value)}
+                    placeholder="React, Project Management, Sales, etc."
+                  />
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Images */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Images</h3>
+              
+              <div className="space-y-4">
+                <ImageUpload
+                  bucketName="card-images"
+                  currentUrl={formData.profile_image_url}
+                  onUpload={(url) => handleInputChange('profile_image_url', url)}
+                  onRemove={() => handleInputChange('profile_image_url', '')}
+                  label="Profile Image"
+                />
+
+                <ImageUpload
+                  bucketName="company-logos"
+                  currentUrl={formData.company_logo_url}
+                  onUpload={(url) => handleInputChange('company_logo_url', url)}
+                  onRemove={() => handleInputChange('company_logo_url', '')}
+                  label="Company Logo"
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  {[1, 2, 3, 4, 5].map((num) => (
+                    <ImageUpload
+                      key={num}
+                      bucketName="card-images"
+                      currentUrl={formData[`image_${num}_url` as keyof CardData] as string}
+                      onUpload={(url) => handleInputChange(`image_${num}_url` as keyof CardData, url)}
+                      onRemove={() => handleInputChange(`image_${num}_url` as keyof CardData, '')}
+                      label={`Gallery Image ${num}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Custom Links */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Custom Links</h3>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addCustomLink}
+                  disabled={customLinks.length >= 20}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Link
+                </Button>
+              </div>
+              
+              <div className="space-y-3">
+                {customLinks.map((link, index) => (
+                  <div key={index} className="flex gap-2 items-end">
+                    <div className="flex-1 space-y-2">
+                      <Label>Link Title</Label>
+                      <Input
+                        value={link.title}
+                        onChange={(e) => updateCustomLink(index, 'title', e.target.value)}
+                        placeholder="Portfolio, Blog, etc."
+                      />
+                    </div>
+                    <div className="flex-1 space-y-2">
+                      <Label>URL</Label>
+                      <Input
+                        value={link.url}
+                        onChange={(e) => updateCustomLink(index, 'url', e.target.value)}
+                        placeholder="https://example.com"
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => removeCustomLink(index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+                {customLinks.length === 0 && (
+                  <p className="text-sm text-muted-foreground">No custom links added yet.</p>
+                )}
+                {customLinks.length >= 20 && (
+                  <p className="text-sm text-muted-foreground">Maximum 20 links allowed.</p>
+                )}
               </div>
             </div>
 
