@@ -14,7 +14,216 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cards: {
+        Row: {
+          address: string | null
+          bio: string | null
+          color_theme: string | null
+          company: string | null
+          company_logo_url: string | null
+          created_at: string
+          email: string | null
+          id: string
+          instagram_url: string | null
+          is_primary: boolean | null
+          linkedin_url: string | null
+          name: string
+          org_id: string | null
+          phone: string | null
+          profile_image_url: string | null
+          slug: string | null
+          title: string | null
+          twitter_url: string | null
+          updated_at: string
+          user_id: string
+          view_count: number | null
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          bio?: string | null
+          color_theme?: string | null
+          company?: string | null
+          company_logo_url?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          instagram_url?: string | null
+          is_primary?: boolean | null
+          linkedin_url?: string | null
+          name: string
+          org_id?: string | null
+          phone?: string | null
+          profile_image_url?: string | null
+          slug?: string | null
+          title?: string | null
+          twitter_url?: string | null
+          updated_at?: string
+          user_id: string
+          view_count?: number | null
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          bio?: string | null
+          color_theme?: string | null
+          company?: string | null
+          company_logo_url?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          instagram_url?: string | null
+          is_primary?: boolean | null
+          linkedin_url?: string | null
+          name?: string
+          org_id?: string | null
+          phone?: string | null
+          profile_image_url?: string | null
+          slug?: string | null
+          title?: string | null
+          twitter_url?: string | null
+          updated_at?: string
+          user_id?: string
+          view_count?: number | null
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cards_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contacts: {
+        Row: {
+          card_id: string
+          created_at: string
+          email: string
+          id: string
+          message: string | null
+          name: string
+          phone: string | null
+          source: string | null
+        }
+        Insert: {
+          card_id: string
+          created_at?: string
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          phone?: string | null
+          source?: string | null
+        }
+        Update: {
+          card_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string | null
+          source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contacts_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      org_memberships: {
+        Row: {
+          created_at: string
+          id: string
+          org_id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          org_id: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          org_id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_memberships_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          admin_user_id: string
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          admin_user_id: string
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          admin_user_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          id: string
+          name: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
