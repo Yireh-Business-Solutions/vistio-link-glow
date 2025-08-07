@@ -127,7 +127,7 @@ serve(async (req) => {
     }, { onConflict: 'email' });
 
     // Build PayFast URL
-    const payfastUrl = new URL("https://sandbox.payfast.co.za/eng/process"); // Use sandbox for testing
+    const payfastUrl = new URL("https://www.payfast.co.za/eng/process"); // Production PayFast URL
     Object.entries(paymentData).forEach(([key, value]) => {
       payfastUrl.searchParams.append(key, value);
     });
