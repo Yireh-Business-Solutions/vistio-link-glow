@@ -254,7 +254,7 @@ const Landing = () => {
       {/* Footer */}
       <footer className="container mx-auto px-4 py-8 border-t border-border">
         <div className="flex justify-center items-center">
-          <p className="text-muted-foreground">© 2024 Vistio. All rights reserved.</p>
+          <p className="text-muted-foreground">© 2025 Vistio. All rights reserved.</p>
         </div>
       </footer>
     </div>
