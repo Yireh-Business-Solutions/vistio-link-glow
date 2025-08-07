@@ -23,6 +23,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useCards } from "@/hooks/useCards";
 import CreateCardForm from "@/components/cards/CreateCardForm";
+import CardTemplates from "@/components/cards/CardTemplates";
 import ResourcesGenerator from "@/components/resources/ResourcesGenerator";
 import { useToast } from "@/hooks/use-toast";
 
@@ -33,7 +34,9 @@ const Dashboard = () => {
   const { cards, loading, refetch, deleteCard } = useCards();
   const [activeTab, setActiveTab] = useState("cards");
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
   const [editingCard, setEditingCard] = useState(null);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
 
   const handleSignOut = async () => {
     await signOut();
@@ -64,6 +67,12 @@ const Dashboard = () => {
 
   const handleEditCard = (card: any) => {
     setEditingCard(card);
+  };
+
+  const handleSelectTemplate = (templateData: any) => {
+    setSelectedTemplate(templateData);
+    setShowTemplates(false);
+    setShowCreateForm(true);
   };
 
   const handleShareCard = (card: any) => {
@@ -161,26 +170,53 @@ const Dashboard = () => {
           <TabsContent value="cards" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold">My Business Cards</h2>
-              <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
-                <DialogTrigger asChild>
-                  <Button className="bg-gradient-primary hover:shadow-neon transition-all duration-300">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create New Card
-                  </Button>
-                </DialogTrigger>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => setShowTemplates(true)}
+                  variant="outline"
+                  className="hover:border-neon-blue transition-all duration-300"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Use Template
+                </Button>
+                <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-gradient-primary hover:shadow-neon transition-all duration-300">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create from Scratch
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto bg-gradient-hero">
+                    <DialogHeader>
+                      <DialogTitle className="text-2xl bg-gradient-primary bg-clip-text text-transparent">
+                        Create New Business Card
+                      </DialogTitle>
+                    </DialogHeader>
+                    <CreateCardForm 
+                      initialData={selectedTemplate}
+                      onSuccess={() => {
+                        setShowCreateForm(false);
+                        setSelectedTemplate(null);
+                        refetch();
+                      }}
+                      onCancel={() => {
+                        setShowCreateForm(false);
+                        setSelectedTemplate(null);
+                      }}
+                    />
+                  </DialogContent>
+                </Dialog>
+              </div>
+              
+              {/* Templates Dialog */}
+              <Dialog open={showTemplates} onOpenChange={setShowTemplates}>
                 <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto bg-gradient-hero">
                   <DialogHeader>
                     <DialogTitle className="text-2xl bg-gradient-primary bg-clip-text text-transparent">
-                      Create New Business Card
+                      Choose a Template
                     </DialogTitle>
                   </DialogHeader>
-                  <CreateCardForm 
-                    onSuccess={() => {
-                      setShowCreateForm(false);
-                      refetch();
-                    }}
-                    onCancel={() => setShowCreateForm(false)}
-                  />
+                  <CardTemplates onSelectTemplate={handleSelectTemplate} />
                 </DialogContent>
               </Dialog>
               
@@ -223,13 +259,23 @@ const Dashboard = () => {
                   <p className="text-muted-foreground mb-6">
                     Create your first digital business card to get started.
                   </p>
-                  <Button 
-                    onClick={() => setShowCreateForm(true)}
-                    className="bg-gradient-primary hover:shadow-neon transition-all duration-300"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create Your First Card
-                  </Button>
+                  <div className="flex gap-2 justify-center">
+                    <Button 
+                      onClick={() => setShowTemplates(true)}
+                      variant="outline"
+                      className="hover:border-neon-blue transition-all duration-300"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Use Template
+                    </Button>
+                    <Button 
+                      onClick={() => setShowCreateForm(true)}
+                      className="bg-gradient-primary hover:shadow-neon transition-all duration-300"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create from Scratch
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ) : (
@@ -346,13 +392,23 @@ const Dashboard = () => {
                   <p className="text-muted-foreground mb-6">
                     Create a business card first to generate email signatures and resources.
                   </p>
-                  <Button 
-                    onClick={() => setShowCreateForm(true)}
-                    className="bg-gradient-primary hover:shadow-neon transition-all duration-300"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create Your First Card
-                  </Button>
+                  <div className="flex gap-2 justify-center">
+                    <Button 
+                      onClick={() => setShowTemplates(true)}
+                      variant="outline"
+                      className="hover:border-neon-blue transition-all duration-300"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Use Template
+                    </Button>
+                    <Button 
+                      onClick={() => setShowCreateForm(true)}
+                      className="bg-gradient-primary hover:shadow-neon transition-all duration-300"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create from Scratch
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ) : (

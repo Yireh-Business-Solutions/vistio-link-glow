@@ -17,14 +17,18 @@ import {
   MapPin, 
   Globe, 
   Linkedin, 
-  Twitter, 
+  X, 
   Instagram, 
   Plus, 
-  X,
-  Settings
+  Settings,
+  Facebook,
+  MessageCircle
 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import ImageUpload from "./ImageUpload";
 import CardCustomization from "./CardCustomization";
+import ImageResizer from "./ImageResizer";
+import StickyEditButton from "./StickyEditButton";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -73,6 +77,7 @@ interface CardData {
   linkedin_url: string;
   twitter_url: string;
   instagram_url: string;
+  facebook_url: string;
   bio?: string;
   certifications?: string;
   awards?: string;
@@ -102,6 +107,10 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
   const { user } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [showImageResizer, setShowImageResizer] = useState(false);
+  const [resizingImageField, setResizingImageField] = useState<string>("");
+  const [resizingImageUrl, setResizingImageUrl] = useState("");
   const [formData, setFormData] = useState<CardData>({
     name: "",
     title: "",
@@ -115,6 +124,7 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
     linkedin_url: "",
     twitter_url: "",
     instagram_url: "",
+    facebook_url: "",
     bio: "",
     certifications: "",
     awards: "",
@@ -177,6 +187,7 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
         linkedin_url: initialData.linkedin_url || "",
         twitter_url: initialData.twitter_url || "",
         instagram_url: initialData.instagram_url || "",
+        facebook_url: initialData.facebook_url || "",
         bio: initialData.bio || "",
         certifications: initialData.certifications || "",
         awards: initialData.awards || "",
@@ -218,6 +229,20 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
 
   const handleInputChange = (field: keyof CardData, value: string | VisibleSections | SignatureStyle | BackgroundStyle) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    setHasUnsavedChanges(true);
+  };
+
+  const handleImageResize = (imageUrl: string) => {
+    handleInputChange(resizingImageField as keyof CardData, imageUrl);
+    setShowImageResizer(false);
+    setResizingImageField("");
+    setResizingImageUrl("");
+  };
+
+  const openImageResizer = (field: string, currentUrl: string) => {
+    setResizingImageField(field);
+    setResizingImageUrl(currentUrl);
+    setShowImageResizer(true);
   };
 
   const generateSlug = (name: string) => {
@@ -295,6 +320,7 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
           });
         } else {
           console.log("Card updated successfully:", data);
+          setHasUnsavedChanges(false);
           toast({
             title: "Card updated successfully!",
             description: "Your digital business card has been updated."
@@ -330,6 +356,7 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
           });
         } else {
           console.log("Card created successfully:", data);
+          setHasUnsavedChanges(false);
           toast({
             title: "Card created successfully!",
             description: "Your digital business card is ready to share."
@@ -496,9 +523,9 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="twitter">Twitter</Label>
+                    <Label htmlFor="twitter">X (Twitter)</Label>
                     <div className="relative">
-                      <Twitter className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <X className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="twitter"
                         className="pl-10"
@@ -521,6 +548,20 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
                         placeholder="@username"
                       />
                     </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="facebook">Facebook</Label>
+                  <div className="relative">
+                    <Facebook className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="facebook"
+                      className="pl-10"
+                      value={formData.facebook_url}
+                      onChange={(e) => handleInputChange('facebook_url', e.target.value)}
+                      placeholder="facebook.com/username"
+                    />
                   </div>
                 </div>
               </div>
@@ -839,8 +880,8 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
                 )}
                 {formData.twitter_url && (
                   <Badge variant="outline" style={{ borderColor: selectedTheme?.color }}>
-                    <Twitter className="h-3 w-3 mr-1" />
-                    Twitter
+                    <X className="h-3 w-3 mr-1" />
+                    X
                   </Badge>
                 )}
                 {formData.instagram_url && (
