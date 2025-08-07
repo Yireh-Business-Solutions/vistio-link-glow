@@ -415,8 +415,8 @@ export type Database = {
           created_at: string
           email: string
           id: string
-          stripe_customer_id: string | null
-          stripe_subscription_id: string | null
+          payfast_subscription_id: string | null
+          payfast_token: string | null
           subscribed: boolean
           subscription_end: string | null
           subscription_tier: string | null
@@ -427,8 +427,8 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
+          payfast_subscription_id?: string | null
+          payfast_token?: string | null
           subscribed?: boolean
           subscription_end?: string | null
           subscription_tier?: string | null
@@ -439,8 +439,8 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
+          payfast_subscription_id?: string | null
+          payfast_token?: string | null
           subscribed?: boolean
           subscription_end?: string | null
           subscription_tier?: string | null
@@ -460,11 +460,11 @@ export type Database = {
           max_gallery_images: number
           max_profile_images: number
           name: string
+          payfast_item_name_monthly: string | null
+          payfast_item_name_yearly: string | null
           price_monthly: number
           price_yearly: number
           signatures_enabled: boolean
-          stripe_price_id_monthly: string | null
-          stripe_price_id_yearly: string | null
           visible_sections_enabled: boolean
         }
         Insert: {
@@ -477,11 +477,11 @@ export type Database = {
           max_gallery_images: number
           max_profile_images: number
           name: string
+          payfast_item_name_monthly?: string | null
+          payfast_item_name_yearly?: string | null
           price_monthly: number
           price_yearly: number
           signatures_enabled?: boolean
-          stripe_price_id_monthly?: string | null
-          stripe_price_id_yearly?: string | null
           visible_sections_enabled?: boolean
         }
         Update: {
@@ -494,11 +494,11 @@ export type Database = {
           max_gallery_images?: number
           max_profile_images?: number
           name?: string
+          payfast_item_name_monthly?: string | null
+          payfast_item_name_yearly?: string | null
           price_monthly?: number
           price_yearly?: number
           signatures_enabled?: boolean
-          stripe_price_id_monthly?: string | null
-          stripe_price_id_yearly?: string | null
           visible_sections_enabled?: boolean
         }
         Relationships: []
