@@ -410,11 +410,118 @@ export type Database = {
         }
         Relationships: []
       }
+      subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          subscribed: boolean
+          subscription_end: string | null
+          subscription_tier: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      subscription_plans: {
+        Row: {
+          backgrounds_enabled: boolean
+          created_at: string
+          design_variants_count: number
+          id: string
+          max_cards: number
+          max_custom_links: number
+          max_gallery_images: number
+          max_profile_images: number
+          name: string
+          price_monthly: number
+          price_yearly: number
+          signatures_enabled: boolean
+          stripe_price_id_monthly: string | null
+          stripe_price_id_yearly: string | null
+          visible_sections_enabled: boolean
+        }
+        Insert: {
+          backgrounds_enabled?: boolean
+          created_at?: string
+          design_variants_count: number
+          id?: string
+          max_cards: number
+          max_custom_links: number
+          max_gallery_images: number
+          max_profile_images: number
+          name: string
+          price_monthly: number
+          price_yearly: number
+          signatures_enabled?: boolean
+          stripe_price_id_monthly?: string | null
+          stripe_price_id_yearly?: string | null
+          visible_sections_enabled?: boolean
+        }
+        Update: {
+          backgrounds_enabled?: boolean
+          created_at?: string
+          design_variants_count?: number
+          id?: string
+          max_cards?: number
+          max_custom_links?: number
+          max_gallery_images?: number
+          max_profile_images?: number
+          name?: string
+          price_monthly?: number
+          price_yearly?: number
+          signatures_enabled?: boolean
+          stripe_price_id_monthly?: string | null
+          stripe_price_id_yearly?: string | null
+          visible_sections_enabled?: boolean
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      get_user_limits: {
+        Args: { _user_id: string }
+        Returns: {
+          max_cards: number
+          max_profile_images: number
+          max_gallery_images: number
+          max_custom_links: number
+          design_variants_count: number
+          visible_sections_enabled: boolean
+          signatures_enabled: boolean
+          backgrounds_enabled: boolean
+          subscription_tier: string
+        }[]
+      }
       is_org_member: {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean
