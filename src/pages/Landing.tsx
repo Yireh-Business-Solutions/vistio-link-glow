@@ -12,6 +12,11 @@ const Landing = () => {
           <Sparkles className="h-8 w-8 text-neon-blue" />
           <span className="text-2xl font-bold text-foreground">Vistio</span>
         </div>
+        <div className="hidden md:flex items-center space-x-6">
+          <Link to="/pricing" className="text-foreground hover:text-neon-blue transition-colors">
+            Pricing
+          </Link>
+        </div>
         <div className="space-x-4">
           <Link to="/auth">
             <Button variant="outline" className="border-neon-blue text-neon-blue hover:bg-neon-blue hover:text-background">
@@ -45,6 +50,15 @@ const Landing = () => {
                 className="bg-gradient-primary hover:shadow-glow transition-all duration-300 text-lg px-8 py-6"
               >
                 Create Your Card
+              </Button>
+            </Link>
+            <Link to="/pricing">
+              <Button 
+                variant="outline"
+                size="lg" 
+                className="border-neon-blue text-neon-blue hover:bg-neon-blue hover:text-background text-lg px-8 py-6"
+              >
+                View Pricing
               </Button>
             </Link>
             <div className="text-sm text-muted-foreground">

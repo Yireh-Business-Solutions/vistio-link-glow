@@ -25,6 +25,7 @@ import { useCards } from "@/hooks/useCards";
 import CreateCardForm from "@/components/cards/CreateCardForm";
 import CardTemplates from "@/components/cards/CardTemplates";
 import ResourcesGenerator from "@/components/resources/ResourcesGenerator";
+import SubscriptionManagement from "@/components/SubscriptionManagement";
 import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
@@ -455,6 +456,11 @@ const Dashboard = () => {
           {/* Settings Tab */}
           <TabsContent value="settings" className="space-y-6">
             <h2 className="text-2xl font-semibold">Settings</h2>
+            
+            {/* Subscription Management */}
+            <SubscriptionManagement />
+            
+            {/* Account Settings */}
             <Card className="bg-card/50 backdrop-blur-sm border-border">
               <CardHeader>
                 <CardTitle>Account Settings</CardTitle>

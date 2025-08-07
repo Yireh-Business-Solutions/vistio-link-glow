@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { MD5 } from "https://deno.land/x/crypto@v0.10.0/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -89,19 +90,14 @@ serve(async (req) => {
       cycles: "0", // Unlimited cycles
     };
 
-    // Generate signature using Web Crypto API
+    // Generate signature using MD5
     const dataString = Object.entries(paymentData)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
       .join('&');
 
     const signatureString = dataString + `&passphrase=${encodeURIComponent(passphrase)}`;
-    const encoder = new TextEncoder();
-    const data = encoder.encode(signatureString);
-    const hashBuffer = await crypto.subtle.digest('MD5', data);
-    const signature = Array.from(new Uint8Array(hashBuffer))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
+    const signature = new MD5().update(signatureString).toString();
 
     logStep("Generated signature", { paymentId });
 
