@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,6 +34,7 @@ import ProfileImageResizer from "./ProfileImageResizer";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { useSubscription } from "@/hooks/useSubscription";
 
 interface LinkData {
   title: string;
@@ -113,6 +114,7 @@ interface CreateCardFormProps {
 const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const subscription = useSubscription();
   const [isLoading, setIsLoading] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showImageResizer, setShowImageResizer] = useState(false);
@@ -273,6 +275,14 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
   };
 
   const addCustomLink = () => {
+    if (!subscription.canAddCustomLink(customLinks.length)) {
+      toast({
+        title: "Upgrade Required",
+        description: `Your ${subscription.subscription_tier} plan allows up to ${subscription.limits.max_custom_links} custom links. Upgrade to add more.`,
+        variant: "destructive",
+      });
+      return;
+    }
     if (customLinks.length < 20) {
       setCustomLinks([...customLinks, { title: "", url: "" }]);
     }
@@ -705,29 +715,41 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Images</h3>
                 
-                <div className="space-y-4">
-                  {/* Profile Images */}
-                  <div className="space-y-3">
-                    <h4 className="font-semibold text-sm">Profile Images (up to 5)</h4>
-                    <div className="grid grid-cols-2 gap-4">
-                      {[1, 2, 3, 4, 5].map((num) => (
-                        <ImageUpload
-                          key={num}
-                          bucketName="card-images"
-                          currentUrl={num === 1 ? formData.profile_image_url : formData[`profile_image_${num}_url` as keyof CardData] as string}
-                          onUpload={(url) => {
-                            const field = num === 1 ? 'profile_image_url' : `profile_image_${num}_url` as keyof CardData;
-                            handleInputChange(field, url);
-                          }}
-                          onRemove={() => {
-                            const field = num === 1 ? 'profile_image_url' : `profile_image_${num}_url` as keyof CardData;
-                            handleInputChange(field, '');
-                          }}
-                          label={`Profile Image ${num}`}
-                        />
-                      ))}
-                    </div>
-                  </div>
+                 <div className="space-y-4">
+                   {/* Profile Images */}
+                   <div className="space-y-3">
+                     <h4 className="font-semibold text-sm">Profile Images (up to {subscription.limits.max_profile_images})</h4>
+                     <div className="grid grid-cols-2 gap-4">
+                       {[1, 2, 3, 4, 5].map((num) => {
+                         const isEnabled = num <= subscription.limits.max_profile_images;
+                         return (
+                           <div key={num} className={!isEnabled ? "opacity-50 pointer-events-none" : ""}>
+                             <ImageUpload
+                               bucketName="card-images"
+                               currentUrl={num === 1 ? formData.profile_image_url : formData[`profile_image_${num}_url` as keyof CardData] as string}
+                               onUpload={(url) => {
+                                 if (!isEnabled) {
+                                   toast({
+                                     title: "Upgrade Required",
+                                     description: `Your ${subscription.subscription_tier} plan allows up to ${subscription.limits.max_profile_images} profile images.`,
+                                     variant: "destructive",
+                                   });
+                                   return;
+                                 }
+                                 const field = num === 1 ? 'profile_image_url' : `profile_image_${num}_url` as keyof CardData;
+                                 handleInputChange(field, url);
+                               }}
+                               onRemove={() => {
+                                 const field = num === 1 ? 'profile_image_url' : `profile_image_${num}_url` as keyof CardData;
+                                 handleInputChange(field, '');
+                               }}
+                                label={`Profile Image ${num}${!isEnabled ? ' (Upgrade Required)' : ''}`}
+                             />
+                           </div>
+                         );
+                       })}
+                     </div>
+                   </div>
 
                   <ImageUpload
                     bucketName="company-logos"
@@ -737,21 +759,35 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
                     label="Company Logo"
                   />
 
-                  <div className="space-y-3">
-                    <h4 className="font-semibold text-sm">Gallery Images</h4>
-                    <div className="grid grid-cols-2 gap-4">
-                      {[1, 2, 3, 4, 5].map((num) => (
-                        <ImageUpload
-                          key={num}
-                          bucketName="card-images"
-                          currentUrl={formData[`image_${num}_url` as keyof CardData] as string}
-                          onUpload={(url) => handleInputChange(`image_${num}_url` as keyof CardData, url)}
-                          onRemove={() => handleInputChange(`image_${num}_url` as keyof CardData, '')}
-                          label={`Gallery Image ${num}`}
-                        />
-                      ))}
-                    </div>
-                  </div>
+                   <div className="space-y-3">
+                     <h4 className="font-semibold text-sm">Gallery Images (up to {subscription.limits.max_gallery_images})</h4>
+                     <div className="grid grid-cols-2 gap-4">
+                       {[1, 2, 3, 4, 5].map((num) => {
+                         const isEnabled = num <= subscription.limits.max_gallery_images;
+                         return (
+                           <div key={num} className={!isEnabled ? "opacity-50 pointer-events-none" : ""}>
+                             <ImageUpload
+                               bucketName="card-images"
+                               currentUrl={formData[`image_${num}_url` as keyof CardData] as string}
+                               onUpload={(url) => {
+                                 if (!isEnabled) {
+                                   toast({
+                                     title: "Upgrade Required", 
+                                     description: `Your ${subscription.subscription_tier} plan allows up to ${subscription.limits.max_gallery_images} gallery images.`,
+                                     variant: "destructive",
+                                   });
+                                   return;
+                                 }
+                                 handleInputChange(`image_${num}_url` as keyof CardData, url);
+                               }}
+                               onRemove={() => handleInputChange(`image_${num}_url` as keyof CardData, '')}
+                                label={`Gallery Image ${num}${!isEnabled ? ' (Upgrade Required)' : ''}`}
+                             />
+                           </div>
+                         );
+                       })}
+                     </div>
+                   </div>
                 </div>
               </div>
 
@@ -839,22 +875,47 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Design Variant</Label>
-                  <Select value={formData.design_variant} onValueChange={(value) => handleInputChange('design_variant', value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="classic">Classic - Clean rectangular design</SelectItem>
-                      <SelectItem value="modern">Modern - Full-width hero with overlay</SelectItem>
-                      <SelectItem value="professional">Professional - Corporate style with branding</SelectItem>
-                      <SelectItem value="creative">Creative - Dynamic wavy design</SelectItem>
-                      <SelectItem value="executive">Executive - Premium business layout</SelectItem>
-                      <SelectItem value="minimal">Minimal - Clean and simple</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                 <div className="space-y-2">
+                   <Label>Design Variant</Label>
+                   <Select 
+                     value={formData.design_variant} 
+                     onValueChange={(value) => {
+                       const designs = ["classic", "modern", "professional", "creative", "executive", "minimal"];
+                       const variantIndex = designs.indexOf(value);
+                       if (!subscription.canUseDesignVariant(variantIndex)) {
+                         toast({
+                           title: "Upgrade Required",
+                           description: `Your ${subscription.subscription_tier} plan allows ${subscription.limits.design_variants_count} design variant${subscription.limits.design_variants_count === 1 ? '' : 's'}.`,
+                           variant: "destructive",
+                         });
+                         return;
+                       }
+                       handleInputChange('design_variant', value);
+                     }}
+                   >
+                     <SelectTrigger>
+                       <SelectValue />
+                     </SelectTrigger>
+                     <SelectContent>
+                       <SelectItem value="classic">Classic - Clean rectangular design</SelectItem>
+                       <SelectItem value="modern" disabled={!subscription.canUseDesignVariant(1)}>
+                         Modern - Full-width hero with overlay {!subscription.canUseDesignVariant(1) ? '(Upgrade Required)' : ''}
+                       </SelectItem>
+                       <SelectItem value="professional" disabled={!subscription.canUseDesignVariant(2)}>
+                         Professional - Corporate style with branding {!subscription.canUseDesignVariant(2) ? '(Upgrade Required)' : ''}
+                       </SelectItem>
+                       <SelectItem value="creative" disabled={!subscription.canUseDesignVariant(3)}>
+                         Creative - Dynamic wavy design {!subscription.canUseDesignVariant(3) ? '(Upgrade Required)' : ''}
+                       </SelectItem>
+                       <SelectItem value="executive" disabled={!subscription.canUseDesignVariant(4)}>
+                         Executive - Premium business layout {!subscription.canUseDesignVariant(4) ? '(Upgrade Required)' : ''}
+                       </SelectItem>
+                       <SelectItem value="minimal" disabled={!subscription.canUseDesignVariant(5)}>
+                         Minimal - Clean and simple {!subscription.canUseDesignVariant(5) ? '(Upgrade Required)' : ''}
+                       </SelectItem>
+                     </SelectContent>
+                   </Select>
+                 </div>
               </div>
 
               {/* Actions */}
@@ -885,18 +946,59 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <CardCustomization
-                profileImageSize={formData.profile_image_size}
-                companyLogoSize={formData.company_logo_size}
-                visibleSections={formData.visible_sections}
-                signatureStyle={formData.signature_style}
-                backgroundStyle={formData.background_style}
-                onProfileImageSizeChange={(size) => handleInputChange('profile_image_size', size)}
-                onCompanyLogoSizeChange={(size) => handleInputChange('company_logo_size', size)}
-                onVisibleSectionsChange={(sections) => handleInputChange('visible_sections', sections)}
-                onSignatureStyleChange={(style) => handleInputChange('signature_style', style)}
-                onBackgroundStyleChange={(style) => handleInputChange('background_style', style)}
-              />
+              {!subscription.canUseVisibleSections && !subscription.canUseSignatures && !subscription.canUseBackgrounds ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground mb-4">
+                    Customization options are available with paid plans
+                  </p>
+                  <Button onClick={() => window.location.href = '/pricing'}>
+                    View Plans
+                  </Button>
+                </div>
+              ) : (
+                <CardCustomization
+                  profileImageSize={formData.profile_image_size}
+                  companyLogoSize={formData.company_logo_size}
+                  visibleSections={formData.visible_sections}
+                  signatureStyle={formData.signature_style}
+                  backgroundStyle={formData.background_style}
+                  onProfileImageSizeChange={(size) => handleInputChange('profile_image_size', size)}
+                  onCompanyLogoSizeChange={(size) => handleInputChange('company_logo_size', size)}
+                  onVisibleSectionsChange={(sections) => {
+                    if (!subscription.canUseVisibleSections) {
+                      toast({
+                        title: "Upgrade Required",
+                        description: "Visible sections control is available with Personal plan and above.",
+                        variant: "destructive",
+                      });
+                      return;
+                    }
+                    handleInputChange('visible_sections', sections);
+                  }}
+                  onSignatureStyleChange={(style) => {
+                    if (!subscription.canUseSignatures) {
+                      toast({
+                        title: "Upgrade Required", 
+                        description: "Email signatures are available with Pro plan and above.",
+                        variant: "destructive",
+                      });
+                      return;
+                    }
+                    handleInputChange('signature_style', style);
+                  }}
+                  onBackgroundStyleChange={(style) => {
+                    if (!subscription.canUseBackgrounds) {
+                      toast({
+                        title: "Upgrade Required",
+                        description: "Custom backgrounds are available with Pro plan and above.",
+                        variant: "destructive",
+                      });
+                      return;
+                    }
+                    handleInputChange('background_style', style);
+                  }}
+                />
+              )}
             </CardContent>
           </Card>
         </div>
