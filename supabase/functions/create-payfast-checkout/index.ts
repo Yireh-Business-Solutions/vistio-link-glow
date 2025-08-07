@@ -55,6 +55,9 @@ serve(async (req) => {
     const merchantKey = Deno.env.get("PAYFAST_MERCHANT_KEY") || "";
     const passphrase = Deno.env.get("PAYFAST_PASSPHRASE") || "";
 
+    // PayFast production endpoint
+    const payfastBaseUrl = "https://www.payfast.co.za/eng/process";
+
     const paymentId = `${user.id}-${Date.now()}`;
 
     const paymentData = {
@@ -82,7 +85,9 @@ serve(async (req) => {
       .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
       .join('&');
 
-    const signatureString = dataString + `&passphrase=${encodeURIComponent(passphrase)}`;
+    const signatureString = passphrase
+      ? `${dataString}&passphrase=${encodeURIComponent(passphrase)}`
+      : dataString;
     const signature = await md5(signatureString);
 
     // Store subscription attempt
@@ -95,7 +100,7 @@ serve(async (req) => {
     }, { onConflict: 'email' });
 
     // Build PayFast URL
-    const payfastUrl = new URL("https://www.payfast.co.za/eng/process");
+    const payfastUrl = new URL(payfastBaseUrl);
     Object.entries(paymentData).forEach(([key, value]) => {
       payfastUrl.searchParams.append(key, value);
     });
