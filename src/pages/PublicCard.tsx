@@ -14,14 +14,15 @@ import {
   MapPin, 
   Globe, 
   Linkedin, 
-  Twitter, 
+  X, 
   Instagram,
   Download,
   Share,
   Sparkles,
   QrCode,
   MessageCircle,
-  ExternalLink
+  ExternalLink,
+  Facebook
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -450,17 +451,17 @@ const PublicCard = () => {
                 {card.twitter_url && (
                   <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-sky-500 rounded-full flex items-center justify-center">
-                        <Twitter className="w-5 h-5 text-white" />
+                      <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center">
+                        <X className="w-5 h-5 text-white" />
                       </div>
                       <div>
                         <a
-                          href={card.twitter_url.startsWith('http') ? card.twitter_url : `https://twitter.com/${card.twitter_url.replace('@', '')}`}
+                          href={card.twitter_url.startsWith('http') ? card.twitter_url : `https://x.com/${card.twitter_url.replace('@', '')}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-medium text-gray-900 hover:text-sky-600"
+                          className="font-medium text-gray-900 hover:text-black"
                         >
-                          Follow on Twitter
+                          My X Profile
                         </a>
                         <p className="text-xs text-gray-500">social</p>
                       </div>
@@ -483,6 +484,29 @@ const PublicCard = () => {
                           className="font-medium text-gray-900 hover:text-pink-600"
                         >
                           Follow on Instagram
+                        </a>
+                        <p className="text-xs text-gray-500">social</p>
+                      </div>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-gray-400" />
+                  </div>
+                )}
+
+                {/* Add Facebook support */}
+                {card.facebook_url && (
+                  <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                        <Facebook className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <a
+                          href={card.facebook_url.startsWith('http') ? card.facebook_url : `https://facebook.com/${card.facebook_url}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-gray-900 hover:text-blue-600"
+                        >
+                          Follow on Facebook
                         </a>
                         <p className="text-xs text-gray-500">social</p>
                       </div>

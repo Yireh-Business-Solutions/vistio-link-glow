@@ -28,6 +28,7 @@ export type Database = {
           company_logo_url: string | null
           created_at: string
           email: string | null
+          facebook_url: string | null
           id: string
           image_1_url: string | null
           image_2_url: string | null
@@ -108,6 +109,7 @@ export type Database = {
           company_logo_url?: string | null
           created_at?: string
           email?: string | null
+          facebook_url?: string | null
           id?: string
           image_1_url?: string | null
           image_2_url?: string | null
@@ -188,6 +190,7 @@ export type Database = {
           company_logo_url?: string | null
           created_at?: string
           email?: string | null
+          facebook_url?: string | null
           id?: string
           image_1_url?: string | null
           image_2_url?: string | null

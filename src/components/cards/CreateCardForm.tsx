@@ -378,535 +378,570 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
 
   const selectedTheme = colorThemes.find(theme => theme.value === formData.color_theme);
 
+  const handleSaveCard = async () => {
+    const form = document.querySelector('form') as HTMLFormElement;
+    if (form) {
+      form.requestSubmit();
+    }
+  };
+
   return (
-    <div className="grid lg:grid-cols-2 gap-8">
-      {/* Form */}
-      <div className="space-y-6">
-        <Card className="bg-card/50 backdrop-blur-sm border-border">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5 text-neon-blue" />
-              Create Business Card
-            </CardTitle>
-            <CardDescription>
-              Fill in your information to create your digital business card
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Basic Information */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Basic Information</h3>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name *</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
-                    placeholder="John Doe"
-                    required
-                  />
-                </div>
+    <>
+      {showImageResizer && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <ImageResizer
+            imageUrl={resizingImageUrl}
+            onResize={handleImageResize}
+            onCancel={() => {
+              setShowImageResizer(false);
+              setResizingImageField("");
+              setResizingImageUrl("");
+            }}
+          />
+        </div>
+      )}
+      
+      <StickyEditButton
+        isVisible={!!initialData}
+        onSave={handleSaveCard}
+        hasUnsavedChanges={hasUnsavedChanges}
+      />
+      
+      <div className="grid lg:grid-cols-2 gap-8">
+        {/* Form */}
+        <div className="space-y-6">
+          <Card className="bg-card/50 backdrop-blur-sm border-border">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="h-5 w-5 text-neon-blue" />
+                Create Business Card
+              </CardTitle>
+              <CardDescription>
+                Fill in your information to create your digital business card
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Basic Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Basic Information</h3>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="title">Job Title</Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => handleInputChange('title', e.target.value)}
-                    placeholder="Software Engineer"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="company">Company</Label>
-                <Input
-                  id="company"
-                  value={formData.company}
-                  onChange={(e) => handleInputChange('company', e.target.value)}
-                  placeholder="Acme Inc."
-                />
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Contact Information */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Contact Information</h3>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="email"
-                      type="email"
-                      className="pl-10"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      placeholder="john@example.com"
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="phone"
-                      type="tel"
-                      className="pl-10"
-                      value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
-                      placeholder="+1 (555) 123-4567"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Textarea
-                    id="address"
-                    className="pl-10 min-h-[80px]"
-                    value={formData.address}
-                    onChange={(e) => handleInputChange('address', e.target.value)}
-                    placeholder="123 Main St, City, State 12345"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Social Links */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Social & Web</h3>
-              
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <Label htmlFor="website">Website</Label>
-                  <div className="relative">
-                    <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="website"
-                      type="url"
-                      className="pl-10"
-                      value={formData.website}
-                      onChange={(e) => handleInputChange('website', e.target.value)}
-                      placeholder="https://example.com"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="linkedin">LinkedIn</Label>
-                  <div className="relative">
-                    <Linkedin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="linkedin"
-                        className="pl-10"
-                        value={formData.linkedin_url}
-                        onChange={(e) => handleInputChange('linkedin_url', e.target.value)}
-                        placeholder="linkedin.com/in/username"
-                      />
-                  </div>
-                </div>
-
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="twitter">X (Twitter)</Label>
-                    <div className="relative">
-                      <X className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="twitter"
-                        className="pl-10"
-                        value={formData.twitter_url}
-                        onChange={(e) => handleInputChange('twitter_url', e.target.value)}
-                        placeholder="@username"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="instagram">Instagram</Label>
-                    <div className="relative">
-                      <Instagram className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="instagram"
-                        className="pl-10"
-                        value={formData.instagram_url}
-                        onChange={(e) => handleInputChange('instagram_url', e.target.value)}
-                        placeholder="@username"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="facebook">Facebook</Label>
-                  <div className="relative">
-                    <Facebook className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Label htmlFor="name">Full Name *</Label>
                     <Input
-                      id="facebook"
-                      className="pl-10"
-                      value={formData.facebook_url}
-                      onChange={(e) => handleInputChange('facebook_url', e.target.value)}
-                      placeholder="facebook.com/username"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Additional Information */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Professional Details</h3>
-              
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <Label htmlFor="bio">Bio</Label>
-                  <Textarea
-                    id="bio"
-                    value={formData.bio}
-                    onChange={(e) => handleInputChange('bio', e.target.value)}
-                    placeholder="Tell people about yourself..."
-                    className="min-h-[80px]"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="work_phone">Work Phone</Label>
-                    <Input
-                      id="work_phone"
-                      type="tel"
-                      value={formData.work_phone}
-                      onChange={(e) => handleInputChange('work_phone', e.target.value)}
-                      placeholder="+1 (555) 987-6543"
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      placeholder="John Doe"
+                      required
                     />
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="whatsapp">WhatsApp</Label>
+                    <Label htmlFor="title">Job Title</Label>
                     <Input
-                      id="whatsapp"
-                      type="tel"
-                      value={formData.whatsapp}
-                      onChange={(e) => handleInputChange('whatsapp', e.target.value)}
-                      placeholder="+1 (555) 123-4567"
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) => handleInputChange('title', e.target.value)}
+                      placeholder="Software Engineer"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="certifications">Certifications (comma-separated)</Label>
+                  <Label htmlFor="company">Company</Label>
                   <Input
-                    id="certifications"
-                    value={formData.certifications}
-                    onChange={(e) => handleInputChange('certifications', e.target.value)}
-                    placeholder="AWS Certified, PMP, etc."
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="awards">Awards (comma-separated)</Label>
-                  <Input
-                    id="awards"
-                    value={formData.awards}
-                    onChange={(e) => handleInputChange('awards', e.target.value)}
-                    placeholder="Employee of the Year, Innovation Award, etc."
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="specialties">Specialties (comma-separated)</Label>
-                  <Input
-                    id="specialties"
-                    value={formData.specialties}
-                    onChange={(e) => handleInputChange('specialties', e.target.value)}
-                    placeholder="React, Project Management, Sales, etc."
+                    id="company"
+                    value={formData.company}
+                    onChange={(e) => handleInputChange('company', e.target.value)}
+                    placeholder="Acme Inc."
                   />
                 </div>
               </div>
-            </div>
 
-            <Separator />
+              <Separator />
 
-            {/* Images */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Images</h3>
-              
+              {/* Contact Information */}
               <div className="space-y-4">
-                <ImageUpload
-                  bucketName="card-images"
-                  currentUrl={formData.profile_image_url}
-                  onUpload={(url) => handleInputChange('profile_image_url', url)}
-                  onRemove={() => handleInputChange('profile_image_url', '')}
-                  label="Profile Image"
-                />
-
-                <ImageUpload
-                  bucketName="company-logos"
-                  currentUrl={formData.company_logo_url}
-                  onUpload={(url) => handleInputChange('company_logo_url', url)}
-                  onRemove={() => handleInputChange('company_logo_url', '')}
-                  label="Company Logo"
-                />
-
+                <h3 className="text-lg font-semibold">Contact Information</h3>
+                
                 <div className="grid grid-cols-2 gap-4">
-                  {[1, 2, 3, 4, 5].map((num) => (
-                    <ImageUpload
-                      key={num}
-                      bucketName="card-images"
-                      currentUrl={formData[`image_${num}_url` as keyof CardData] as string}
-                      onUpload={(url) => handleInputChange(`image_${num}_url` as keyof CardData, url)}
-                      onRemove={() => handleInputChange(`image_${num}_url` as keyof CardData, '')}
-                      label={`Gallery Image ${num}`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Custom Links */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Custom Links</h3>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={addCustomLink}
-                  disabled={customLinks.length >= 20}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Link
-                </Button>
-              </div>
-              
-              <div className="space-y-3">
-                {customLinks.map((link, index) => (
-                  <div key={index} className="flex gap-2 items-end">
-                    <div className="flex-1 space-y-2">
-                      <Label>Link Title</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
-                        value={link.title}
-                        onChange={(e) => updateCustomLink(index, 'title', e.target.value)}
-                        placeholder="Portfolio, Blog, etc."
+                        id="email"
+                        type="email"
+                        className="pl-10"
+                        value={formData.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        placeholder="john@example.com"
                       />
                     </div>
-                    <div className="flex-1 space-y-2">
-                      <Label>URL</Label>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone</Label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
-                        value={link.url}
-                        onChange={(e) => updateCustomLink(index, 'url', e.target.value)}
+                        id="phone"
+                        type="tel"
+                        className="pl-10"
+                        value={formData.phone}
+                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        placeholder="+1 (555) 123-4567"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="address">Address</Label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Textarea
+                      id="address"
+                      className="pl-10 min-h-[80px]"
+                      value={formData.address}
+                      onChange={(e) => handleInputChange('address', e.target.value)}
+                      placeholder="123 Main St, City, State 12345"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Social Links */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Social & Web</h3>
+                
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="website">Website</Label>
+                    <div className="relative">
+                      <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="website"
+                        type="url"
+                        className="pl-10"
+                        value={formData.website}
+                        onChange={(e) => handleInputChange('website', e.target.value)}
                         placeholder="https://example.com"
                       />
                     </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => removeCustomLink(index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
                   </div>
-                ))}
-                {customLinks.length === 0 && (
-                  <p className="text-sm text-muted-foreground">No custom links added yet.</p>
-                )}
-                {customLinks.length >= 20 && (
-                  <p className="text-sm text-muted-foreground">Maximum 20 links allowed.</p>
-                )}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="linkedin">LinkedIn</Label>
+                    <div className="relative">
+                      <Linkedin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="linkedin"
+                          className="pl-10"
+                          value={formData.linkedin_url}
+                          onChange={(e) => handleInputChange('linkedin_url', e.target.value)}
+                          placeholder="linkedin.com/in/username"
+                        />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="twitter">X (Twitter)</Label>
+                      <div className="relative">
+                        <X className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="twitter"
+                          className="pl-10"
+                          value={formData.twitter_url}
+                          onChange={(e) => handleInputChange('twitter_url', e.target.value)}
+                          placeholder="@username"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="instagram">Instagram</Label>
+                      <div className="relative">
+                        <Instagram className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="instagram"
+                          className="pl-10"
+                          value={formData.instagram_url}
+                          onChange={(e) => handleInputChange('instagram_url', e.target.value)}
+                          placeholder="@username"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="facebook">Facebook</Label>
+                    <div className="relative">
+                      <Facebook className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="facebook"
+                        className="pl-10"
+                        value={formData.facebook_url}
+                        onChange={(e) => handleInputChange('facebook_url', e.target.value)}
+                        placeholder="facebook.com/username"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
 
-            <Separator />
+              <Separator />
 
-            {/* Color Theme */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Theme</h3>
-              <div className="space-y-2">
-                <Label>Color Theme</Label>
-                <Select value={formData.color_theme} onValueChange={(value) => handleInputChange('color_theme', value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {colorThemes.map((theme) => (
-                      <SelectItem key={theme.value} value={theme.value}>
-                        <div className="flex items-center gap-2">
-                          <div 
-                            className="w-4 h-4 rounded-full border"
-                            style={{ backgroundColor: theme.color }}
-                          />
-                          {theme.label}
-                        </div>
-                      </SelectItem>
+              {/* Additional Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Professional Details</h3>
+                
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="bio">Bio</Label>
+                    <Textarea
+                      id="bio"
+                      value={formData.bio}
+                      onChange={(e) => handleInputChange('bio', e.target.value)}
+                      placeholder="Tell people about yourself..."
+                      className="min-h-[80px]"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="work_phone">Work Phone</Label>
+                      <Input
+                        id="work_phone"
+                        type="tel"
+                        value={formData.work_phone}
+                        onChange={(e) => handleInputChange('work_phone', e.target.value)}
+                        placeholder="+1 (555) 987-6543"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="whatsapp">WhatsApp</Label>
+                      <Input
+                        id="whatsapp"
+                        type="tel"
+                        value={formData.whatsapp}
+                        onChange={(e) => handleInputChange('whatsapp', e.target.value)}
+                        placeholder="+1 (555) 123-4567"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="certifications">Certifications (comma-separated)</Label>
+                    <Input
+                      id="certifications"
+                      value={formData.certifications}
+                      onChange={(e) => handleInputChange('certifications', e.target.value)}
+                      placeholder="AWS Certified, PMP, etc."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="awards">Awards (comma-separated)</Label>
+                    <Input
+                      id="awards"
+                      value={formData.awards}
+                      onChange={(e) => handleInputChange('awards', e.target.value)}
+                      placeholder="Employee of the Year, Innovation Award, etc."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="specialties">Specialties (comma-separated)</Label>
+                    <Input
+                      id="specialties"
+                      value={formData.specialties}
+                      onChange={(e) => handleInputChange('specialties', e.target.value)}
+                      placeholder="React, Project Management, Sales, etc."
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Images */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Images</h3>
+                
+                <div className="space-y-4">
+                  <ImageUpload
+                    bucketName="card-images"
+                    currentUrl={formData.profile_image_url}
+                    onUpload={(url) => handleInputChange('profile_image_url', url)}
+                    onRemove={() => handleInputChange('profile_image_url', '')}
+                    label="Profile Image"
+                  />
+
+                  <ImageUpload
+                    bucketName="company-logos"
+                    currentUrl={formData.company_logo_url}
+                    onUpload={(url) => handleInputChange('company_logo_url', url)}
+                    onRemove={() => handleInputChange('company_logo_url', '')}
+                    label="Company Logo"
+                  />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    {[1, 2, 3, 4, 5].map((num) => (
+                      <ImageUpload
+                        key={num}
+                        bucketName="card-images"
+                        currentUrl={formData[`image_${num}_url` as keyof CardData] as string}
+                        onUpload={(url) => handleInputChange(`image_${num}_url` as keyof CardData, url)}
+                        onRemove={() => handleInputChange(`image_${num}_url` as keyof CardData, '')}
+                        label={`Gallery Image ${num}`}
+                      />
                     ))}
-                  </SelectContent>
-                </Select>
+                  </div>
+                </div>
               </div>
-            </div>
 
-            {/* Actions */}
-            <div className="flex gap-3 pt-4">
-              <Button type="submit" disabled={isLoading} className="flex-1 bg-gradient-primary hover:shadow-neon transition-all duration-300">
-                <Save className="h-4 w-4 mr-2" />
-                {isLoading ? (initialData ? "Updating..." : "Creating...") : (initialData ? "Update Card" : "Create Card")}
-              </Button>
-              {onCancel && (
-                <Button type="button" variant="outline" onClick={onCancel}>
-                  Cancel
+              <Separator />
+
+              {/* Custom Links */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">Custom Links</h3>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addCustomLink}
+                    disabled={customLinks.length >= 20}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Link
+                  </Button>
+                </div>
+                
+                <div className="space-y-3">
+                  {customLinks.map((link, index) => (
+                    <div key={index} className="flex gap-2 items-end">
+                      <div className="flex-1 space-y-2">
+                        <Label>Link Title</Label>
+                        <Input
+                          value={link.title}
+                          onChange={(e) => updateCustomLink(index, 'title', e.target.value)}
+                          placeholder="Portfolio, Blog, etc."
+                        />
+                      </div>
+                      <div className="flex-1 space-y-2">
+                        <Label>URL</Label>
+                        <Input
+                          value={link.url}
+                          onChange={(e) => updateCustomLink(index, 'url', e.target.value)}
+                          placeholder="https://example.com"
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removeCustomLink(index)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  {customLinks.length === 0 && (
+                    <p className="text-sm text-muted-foreground">No custom links added yet.</p>
+                  )}
+                  {customLinks.length >= 20 && (
+                    <p className="text-sm text-muted-foreground">Maximum 20 links allowed.</p>
+                  )}
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Color Theme */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Theme</h3>
+                <div className="space-y-2">
+                  <Label>Color Theme</Label>
+                  <Select value={formData.color_theme} onValueChange={(value) => handleInputChange('color_theme', value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {colorThemes.map((theme) => (
+                        <SelectItem key={theme.value} value={theme.value}>
+                          <div className="flex items-center gap-2">
+                            <div 
+                              className="w-4 h-4 rounded-full border"
+                              style={{ backgroundColor: theme.color }}
+                            />
+                            {theme.label}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3 pt-4">
+                <Button type="submit" disabled={isLoading} className="flex-1 bg-gradient-primary hover:shadow-neon transition-all duration-300">
+                  <Save className="h-4 w-4 mr-2" />
+                  {isLoading ? (initialData ? "Updating..." : "Creating...") : (initialData ? "Update Card" : "Create Card")}
                 </Button>
-              )}
-            </div>
-            </form>
-          </CardContent>
-        </Card>
+                {onCancel && (
+                  <Button type="button" variant="outline" onClick={onCancel}>
+                    Cancel
+                  </Button>
+                )}
+              </div>
+              </form>
+            </CardContent>
+          </Card>
 
-        {/* Customization Options */}
+          {/* Customization Options */}
+          <Card className="bg-card/50 backdrop-blur-sm border-border">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="h-5 w-5 text-neon-purple" />
+                Customization Options
+              </CardTitle>
+              <CardDescription>
+                Customize your card layout, signature style, and virtual backgrounds
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CardCustomization
+                profileImageSize={formData.profile_image_size}
+                companyLogoSize={formData.company_logo_size}
+                visibleSections={formData.visible_sections}
+                signatureStyle={formData.signature_style}
+                backgroundStyle={formData.background_style}
+                onProfileImageSizeChange={(size) => handleInputChange('profile_image_size', size)}
+                onCompanyLogoSizeChange={(size) => handleInputChange('company_logo_size', size)}
+                onVisibleSectionsChange={(sections) => handleInputChange('visible_sections', sections)}
+                onSignatureStyleChange={(style) => handleInputChange('signature_style', style)}
+                onBackgroundStyleChange={(style) => handleInputChange('background_style', style)}
+              />
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Preview */}
         <Card className="bg-card/50 backdrop-blur-sm border-border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Settings className="h-5 w-5 text-neon-purple" />
-              Customization Options
+              <Eye className="h-5 w-5 text-neon-green" />
+              Live Preview
             </CardTitle>
             <CardDescription>
-              Customize your card layout, signature style, and virtual backgrounds
+              See how your card will look to others
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <CardCustomization
-              profileImageSize={formData.profile_image_size}
-              companyLogoSize={formData.company_logo_size}
-              visibleSections={formData.visible_sections}
-              signatureStyle={formData.signature_style}
-              backgroundStyle={formData.background_style}
-              onProfileImageSizeChange={(size) => handleInputChange('profile_image_size', size)}
-              onCompanyLogoSizeChange={(size) => handleInputChange('company_logo_size', size)}
-              onVisibleSectionsChange={(sections) => handleInputChange('visible_sections', sections)}
-              onSignatureStyleChange={(style) => handleInputChange('signature_style', style)}
-              onBackgroundStyleChange={(style) => handleInputChange('background_style', style)}
-            />
+            <div 
+              className="p-6 rounded-lg border-2 transition-all duration-300"
+              style={{ 
+                borderColor: selectedTheme?.color,
+                boxShadow: `0 0 20px ${selectedTheme?.color}30`
+              }}
+            >
+              <div className="text-center space-y-4">
+                {/* Profile Picture Placeholder */}
+                <div 
+                  className="w-24 h-24 rounded-full mx-auto border-2 flex items-center justify-center"
+                  style={{ borderColor: selectedTheme?.color }}
+                >
+                  <User className="h-12 w-12 text-muted-foreground" />
+                </div>
+
+                {/* Name and Title */}
+                <div>
+                  <h2 className="text-2xl font-bold">
+                    {formData.name || "Your Name"}
+                  </h2>
+                  {formData.title && (
+                    <p className="text-muted-foreground">{formData.title}</p>
+                  )}
+                  {formData.company && (
+                    <p className="text-sm text-muted-foreground">{formData.company}</p>
+                  )}
+                </div>
+
+                {/* Contact Info */}
+                <div className="space-y-2 text-sm">
+                  {formData.email && (
+                    <div className="flex items-center justify-center gap-2">
+                      <Mail className="h-4 w-4" style={{ color: selectedTheme?.color }} />
+                      <span>{formData.email}</span>
+                    </div>
+                  )}
+                  {formData.phone && (
+                    <div className="flex items-center justify-center gap-2">
+                      <Phone className="h-4 w-4" style={{ color: selectedTheme?.color }} />
+                      <span>{formData.phone}</span>
+                    </div>
+                  )}
+                  {formData.website && (
+                    <div className="flex items-center justify-center gap-2">
+                      <Globe className="h-4 w-4" style={{ color: selectedTheme?.color }} />
+                      <span className="truncate">{formData.website}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Social Links */}
+                <div className="flex justify-center gap-3 pt-2">
+                  {formData.linkedin_url && (
+                    <Badge variant="outline" style={{ borderColor: selectedTheme?.color }}>
+                      <Linkedin className="h-3 w-3 mr-1" />
+                      LinkedIn
+                    </Badge>
+                  )}
+                  {formData.twitter_url && (
+                    <Badge variant="outline" style={{ borderColor: selectedTheme?.color }}>
+                      <X className="h-3 w-3 mr-1" />
+                      X
+                    </Badge>
+                  )}
+                  {formData.instagram_url && (
+                    <Badge variant="outline" style={{ borderColor: selectedTheme?.color }}>
+                      <Instagram className="h-3 w-3 mr-1" />
+                      Instagram
+                    </Badge>
+                  )}
+                  {formData.facebook_url && (
+                    <Badge variant="outline" style={{ borderColor: selectedTheme?.color }}>
+                      <Facebook className="h-3 w-3 mr-1" />
+                      Facebook
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Action Buttons Preview */}
+                <div className="flex gap-2 pt-4">
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <Share className="h-3 w-3 mr-1" />
+                    Share
+                  </Button>
+                  <Button size="sm" variant="outline" className="flex-1">
+                    Save Contact
+                  </Button>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
-
-      {/* Preview */}
-      <Card className="bg-card/50 backdrop-blur-sm border-border">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Eye className="h-5 w-5 text-neon-green" />
-            Live Preview
-          </CardTitle>
-          <CardDescription>
-            See how your card will look to others
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div 
-            className="p-6 rounded-lg border-2 transition-all duration-300"
-            style={{ 
-              borderColor: selectedTheme?.color,
-              boxShadow: `0 0 20px ${selectedTheme?.color}30`
-            }}
-          >
-            <div className="text-center space-y-4">
-              {/* Profile Picture Placeholder */}
-              <div 
-                className="w-24 h-24 rounded-full mx-auto border-2 flex items-center justify-center"
-                style={{ borderColor: selectedTheme?.color }}
-              >
-                <User className="h-12 w-12 text-muted-foreground" />
-              </div>
-
-              {/* Name and Title */}
-              <div>
-                <h2 className="text-2xl font-bold">
-                  {formData.name || "Your Name"}
-                </h2>
-                {formData.title && (
-                  <p className="text-muted-foreground">{formData.title}</p>
-                )}
-                {formData.company && (
-                  <p className="text-sm text-muted-foreground">{formData.company}</p>
-                )}
-              </div>
-
-              {/* Contact Info */}
-              <div className="space-y-2 text-sm">
-                {formData.email && (
-                  <div className="flex items-center justify-center gap-2">
-                    <Mail className="h-4 w-4" style={{ color: selectedTheme?.color }} />
-                    <span>{formData.email}</span>
-                  </div>
-                )}
-                {formData.phone && (
-                  <div className="flex items-center justify-center gap-2">
-                    <Phone className="h-4 w-4" style={{ color: selectedTheme?.color }} />
-                    <span>{formData.phone}</span>
-                  </div>
-                )}
-                {formData.website && (
-                  <div className="flex items-center justify-center gap-2">
-                    <Globe className="h-4 w-4" style={{ color: selectedTheme?.color }} />
-                    <span className="truncate">{formData.website}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Social Links */}
-              <div className="flex justify-center gap-3 pt-2">
-                {formData.linkedin_url && (
-                  <Badge variant="outline" style={{ borderColor: selectedTheme?.color }}>
-                    <Linkedin className="h-3 w-3 mr-1" />
-                    LinkedIn
-                  </Badge>
-                )}
-                {formData.twitter_url && (
-                  <Badge variant="outline" style={{ borderColor: selectedTheme?.color }}>
-                    <X className="h-3 w-3 mr-1" />
-                    X
-                  </Badge>
-                )}
-                {formData.instagram_url && (
-                  <Badge variant="outline" style={{ borderColor: selectedTheme?.color }}>
-                    <Instagram className="h-3 w-3 mr-1" />
-                    Instagram
-                  </Badge>
-                )}
-              </div>
-
-              {/* Action Buttons Preview */}
-              <div className="flex gap-2 pt-4">
-                <Button size="sm" variant="outline" className="flex-1">
-                  <Share className="h-3 w-3 mr-1" />
-                  Share
-                </Button>
-                <Button size="sm" variant="outline" className="flex-1">
-                  Save Contact
-                </Button>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    </>
   );
 };
 
