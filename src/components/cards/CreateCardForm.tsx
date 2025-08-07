@@ -30,6 +30,7 @@ import CardCustomization from "./CardCustomization";
 import ImageResizer from "./ImageResizer";
 import StickyEditButton from "./StickyEditButton";
 import LivePreview from "./LivePreview";
+import ProfileImageResizer from "./ProfileImageResizer";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -115,8 +116,10 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
   const [isLoading, setIsLoading] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showImageResizer, setShowImageResizer] = useState(false);
+  const [showProfileResizer, setShowProfileResizer] = useState(false);
   const [resizingImageField, setResizingImageField] = useState<string>("");
   const [resizingImageUrl, setResizingImageUrl] = useState("");
+  const [resizingProfileUrl, setResizingProfileUrl] = useState("");
   const [formData, setFormData] = useState<CardData>({
     name: "",
     title: "",
@@ -411,6 +414,21 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
             }}
           />
         </div>
+      )}
+
+      {showProfileResizer && (
+        <ProfileImageResizer
+          imageUrl={resizingProfileUrl}
+          onResize={(url) => {
+            // Handle profile image resize
+            setShowProfileResizer(false);
+            setResizingProfileUrl("");
+          }}
+          onCancel={() => {
+            setShowProfileResizer(false);
+            setResizingProfileUrl("");
+          }}
+        />
       )}
       
       <StickyEditButton
@@ -829,10 +847,11 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="classic">Classic - Clean rectangular design</SelectItem>
-                      <SelectItem value="wavy1">Wavy 1 - Subtle curved bottom</SelectItem>
-                      <SelectItem value="wavy2">Wavy 2 - Pronounced curved waves</SelectItem>
-                      <SelectItem value="wavy3">Wavy 3 - Dynamic wave pattern</SelectItem>
-                      <SelectItem value="angular">Angular - Sharp geometric design</SelectItem>
+                      <SelectItem value="modern">Modern - Full-width hero with overlay</SelectItem>
+                      <SelectItem value="professional">Professional - Corporate style with branding</SelectItem>
+                      <SelectItem value="creative">Creative - Dynamic wavy design</SelectItem>
+                      <SelectItem value="executive">Executive - Premium business layout</SelectItem>
+                      <SelectItem value="minimal">Minimal - Clean and simple</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -894,7 +913,7 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
                 See how your card will look to others
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="max-h-[80vh] overflow-y-auto">
               <LivePreview formData={formData} customLinks={customLinks} />
             </CardContent>
           </Card>

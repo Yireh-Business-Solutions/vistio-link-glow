@@ -42,30 +42,32 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
   const getWavyDesign = (variant: string) => {
     const designs = {
       classic: "",
-      wavy1: "before:absolute before:bottom-0 before:left-0 before:right-0 before:h-16 before:bg-white before:rounded-t-[50px]",
-      wavy2: "before:absolute before:bottom-0 before:left-0 before:right-0 before:h-20 before:bg-white before:rounded-t-[100px]",
-      wavy3: "before:absolute before:bottom-0 before:left-0 before:right-0 before:h-12 before:bg-white before:content-[''] before:clip-path-wave",
-      angular: "before:absolute before:bottom-0 before:left-0 before:right-0 before:h-16 before:bg-white before:clip-path-triangle"
+      modern: "relative before:absolute before:bottom-0 before:left-0 before:right-0 before:h-24 before:bg-gradient-to-t before:from-white before:to-transparent before:z-10",
+      professional: "relative before:absolute before:bottom-0 before:left-0 before:right-0 before:h-16 before:bg-white before:rounded-t-[60px] before:z-10",
+      creative: "relative before:absolute before:bottom-0 before:left-0 before:right-0 before:h-20 before:bg-white before:z-10 before:clip-path-wave",
+      executive: "relative before:absolute before:bottom-0 before:left-0 before:right-0 before:h-12 before:bg-gradient-to-r before:from-white/90 before:via-white before:to-white/90 before:z-10",
+      minimal: "relative before:absolute before:bottom-0 before:left-0 before:right-0 before:h-8 before:bg-white before:z-10"
     };
     return designs[variant as keyof typeof designs] || designs.classic;
   };
 
   const getLogoPosition = (variant: string) => {
     const positions = {
-      classic: "absolute top-4 right-4",
-      wavy1: "absolute top-4 right-4",
-      wavy2: "absolute top-4 right-4",
-      wavy3: "absolute top-6 right-4",
-      angular: "absolute top-6 right-4"
+      classic: "absolute top-4 right-4 z-20",
+      modern: "absolute top-6 right-6 z-20",
+      professional: "absolute top-4 right-4 z-20",
+      creative: "absolute top-6 right-6 z-20",
+      executive: "absolute top-4 right-4 z-20",
+      minimal: "absolute top-4 right-4 z-20"
     };
     return positions[variant as keyof typeof positions] || positions.classic;
   };
 
   return (
     <div className="max-w-md mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
-      {/* Header Section with Profile Image */}
-      <div className={`relative h-80 ${getThemeGradient(formData.color_theme)} ${getWavyDesign(formData.design_variant)}`}>
-        <div className="absolute inset-0 bg-black/10"></div>
+      {/* Header Section with Full-Width Profile Image */}
+      <div className={`relative h-96 ${getThemeGradient(formData.color_theme)} ${getWavyDesign(formData.design_variant)} overflow-hidden`}>
+        <div className="absolute inset-0 bg-black/20"></div>
         
         {/* Company Logo */}
         {formData.company_logo_url && (
@@ -73,36 +75,78 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
             <img
               src={formData.company_logo_url}
               alt={`${formData.company} logo`}
-              className="w-16 h-16 bg-white rounded-lg p-2 shadow-lg object-contain"
+              className="w-16 h-16 bg-white/90 rounded-lg p-2 shadow-lg object-contain backdrop-blur-sm"
             />
           </div>
         )}
         
-        {/* Profile Image Slider */}
-        <div className="absolute inset-0 flex items-center justify-center">
+        {/* Full-Width Profile Image Slider */}
+        <div className="absolute inset-0">
           {profileImages.length > 0 ? (
-            <div className="relative">
+            <div className="relative w-full h-full group">
               <img
                 src={profileImages[currentImageIndex]}
                 alt={formData.name}
-                className="w-48 h-48 rounded-2xl object-cover shadow-2xl border-4 border-white/20 transition-all duration-500"
+                className="w-full h-full object-cover transition-all duration-500 cursor-pointer hover:scale-105"
+                onClick={() => {
+                  // Add drag-resize functionality here
+                  const imageResizer = document.createElement('div');
+                  imageResizer.className = 'fixed inset-0 bg-black/50 z-50 flex items-center justify-center';
+                  imageResizer.innerHTML = `
+                    <div class="bg-white p-6 rounded-lg max-w-md w-full mx-4">
+                      <h3 class="text-lg font-semibold mb-4">Resize Profile Image</h3>
+                      <img src="${profileImages[currentImageIndex]}" class="w-full rounded-lg mb-4" />
+                      <div class="flex gap-2">
+                        <button class="flex-1 bg-blue-500 text-white py-2 px-4 rounded" onclick="this.closest('.fixed').remove()">Done</button>
+                        <button class="flex-1 bg-gray-500 text-white py-2 px-4 rounded" onclick="this.closest('.fixed').remove()">Cancel</button>
+                      </div>
+                    </div>
+                  `;
+                  document.body.appendChild(imageResizer);
+                }}
               />
               {profileImages.length > 1 && (
-                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                  {profileImages.map((_, index) => (
-                    <div
-                      key={index}
-                      className={`w-2 h-2 rounded-full transition-all ${
-                        index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                      }`}
-                    />
-                  ))}
+                <>
+                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
+                    {profileImages.map((_, index) => (
+                      <div
+                        key={index}
+                        className={`w-3 h-3 rounded-full transition-all cursor-pointer ${
+                          index === currentImageIndex ? 'bg-white scale-110' : 'bg-white/50 hover:bg-white/75'
+                        }`}
+                        onClick={() => setCurrentImageIndex(index)}
+                      />
+                    ))}
+                  </div>
+                  
+                  {/* Navigation arrows */}
+                  <button 
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                    onClick={() => setCurrentImageIndex((prev) => prev === 0 ? profileImages.length - 1 : prev - 1)}
+                  >
+                    ‹
+                  </button>
+                  <button 
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                    onClick={() => setCurrentImageIndex((prev) => (prev + 1) % profileImages.length)}
+                  >
+                    ›
+                  </button>
+                </>
+              )}
+              
+              {/* Name overlay for modern variants */}
+              {(formData.design_variant === 'modern' || formData.design_variant === 'creative') && (
+                <div className="absolute bottom-8 left-6 right-6 z-20">
+                  <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">{formData.name || "Your Name"}</h1>
+                  {formData.title && <p className="text-xl text-white/90 drop-shadow-md">{formData.title}</p>}
+                  {formData.company && <p className="text-lg text-white/80 drop-shadow-md">{formData.company}</p>}
                 </div>
               )}
             </div>
           ) : (
-            <div className="w-48 h-48 rounded-2xl bg-white/90 flex items-center justify-center shadow-2xl">
-              <User className="w-24 h-24 text-gray-400" />
+            <div className="w-full h-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
+              <User className="w-32 h-32 text-white/50" />
             </div>
           )}
         </div>
@@ -110,17 +154,26 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
 
       {/* Content Section */}
       <div className="px-6 py-6">
-        {/* Basic Info */}
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">{formData.name || "Your Name"}</h1>
-          {formData.title && <p className="text-lg text-gray-600 mb-2">{formData.title}</p>}
-          {formData.company && <p className="text-md text-gray-500 font-medium mb-3">{formData.company}</p>}
-          {formData.bio && (
-            <div className="bg-gray-50 rounded-lg p-4 mt-4">
-              <p className="text-sm text-gray-700 leading-relaxed italic">"{formData.bio}"</p>
-            </div>
-          )}
-        </div>
+        {/* Basic Info - Only show if not in modern/creative variants with overlay */}
+        {!(formData.design_variant === 'modern' || formData.design_variant === 'creative') && (
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">{formData.name || "Your Name"}</h1>
+            {formData.title && <p className="text-lg text-gray-600 mb-2">{formData.title}</p>}
+            {formData.company && <p className="text-md text-gray-500 font-medium mb-3">{formData.company}</p>}
+            {formData.bio && (
+              <div className="bg-gray-50 rounded-lg p-4 mt-4">
+                <p className="text-sm text-gray-700 leading-relaxed italic">"{formData.bio}"</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Bio for modern variants */}
+        {(formData.design_variant === 'modern' || formData.design_variant === 'creative') && formData.bio && (
+          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+            <p className="text-sm text-gray-700 leading-relaxed italic">"{formData.bio}"</p>
+          </div>
+        )}
 
         {/* Contact Information */}
         {formData.visible_sections?.contact && (
