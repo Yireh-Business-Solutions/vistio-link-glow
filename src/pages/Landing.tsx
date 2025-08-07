@@ -8,10 +8,10 @@ const Landing = () => {
     <div className="min-h-screen bg-gradient-hero">
       {/* Header */}
       <header className="container mx-auto px-4 py-6 flex justify-between items-center">
-        <div className="flex items-center space-x-2">
+        <Link to="/" className="flex items-center space-x-2">
           <Sparkles className="h-8 w-8 text-neon-blue" />
           <span className="text-2xl font-bold text-foreground">Vistio</span>
-        </div>
+        </Link>
         <div className="space-x-4">
           <Link to="/auth">
             <Button variant="outline" className="border-neon-blue text-neon-blue hover:bg-neon-blue hover:text-background">
@@ -29,7 +29,7 @@ const Landing = () => {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 text-center">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-6xl md:text-7xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent">
+          <h1 className="text-6xl md:text-7xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent leading-tight">
             Digital Business Cards
             <br />
             Reimagined

@@ -20,7 +20,7 @@ import {
   Eye
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useCards } from "@/hooks/useCards";
 import CreateCardForm from "@/components/cards/CreateCardForm";
 import CardTemplates from "@/components/cards/CardTemplates";
@@ -120,10 +120,10 @@ const Dashboard = () => {
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2">
             <Sparkles className="h-8 w-8 text-neon-blue" />
             <span className="text-2xl font-bold text-foreground">Vistio</span>
-          </div>
+          </Link>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-muted-foreground">
               Welcome, {user?.email}
