@@ -3,11 +3,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Check, Star } from "lucide-react";
+import { Check, Star, Home, LayoutDashboard } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useNavigate } from "react-router-dom";
 
 const plans = [
   {
@@ -86,6 +87,7 @@ export default function Pricing() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { subscription_tier, refreshSubscription } = useSubscription();
+  const navigate = useNavigate();
 
   const handleSubscribe = async (planName: string) => {
     if (!user) {
@@ -133,6 +135,30 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 py-12 px-4">
+      {/* Navigation buttons */}
+      <div className="fixed top-4 right-4 z-50 flex gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2 bg-background/80 backdrop-blur-sm"
+        >
+          <Home className="w-4 h-4" />
+          Home
+        </Button>
+        {user && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate('/dashboard')}
+            className="flex items-center gap-2 bg-background/80 backdrop-blur-sm"
+          >
+            <LayoutDashboard className="w-4 h-4" />
+            Dashboard
+          </Button>
+        )}
+      </div>
+
       <div className="container max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
