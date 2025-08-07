@@ -29,7 +29,8 @@ const ResourcesGenerator = ({ card }: ResourcesGeneratorProps) => {
   };
 
   const generateEmailSignature = () => {
-    const style = card.signature_style || { background: 'gradient', pattern: 'none', custom_colors: { primary: null, secondary: null } };
+    const defaultStyle = { background: 'gradient', pattern: 'none', custom_colors: { primary: null, secondary: null } };
+    const style = (card.signature_style as any) || defaultStyle;
     const primaryColor = style.custom_colors?.primary || getThemeColor(card.color_theme);
     const secondaryColor = style.custom_colors?.secondary || '#ffffff';
     const cardUrl = `${window.location.origin}/card/${card.slug}`;

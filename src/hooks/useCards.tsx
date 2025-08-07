@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { Json } from "@/integrations/supabase/types";
 
 export interface Card {
   id: string;
@@ -30,6 +31,11 @@ export interface Card {
   specialties: string | null;
   is_primary: boolean | null;
   view_count: number | null;
+  profile_image_size: string | null;
+  company_logo_size: string | null;
+  visible_sections: Json;
+  signature_style: Json;
+  background_style: Json;
   created_at: string;
   updated_at: string;
 }
