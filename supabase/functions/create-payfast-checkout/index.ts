@@ -81,7 +81,7 @@ serve(async (req) => {
     // Generate unique payment ID
     const paymentId = `${user.id}-${Date.now()}`;
 
-    // PayFast payment data
+    // PayFast payment data - standard payment methods only
     const paymentData = {
       merchant_id: merchantId,
       merchant_key: merchantKey,
@@ -99,6 +99,8 @@ serve(async (req) => {
       recurring_amount: (amount / 100).toFixed(2),
       frequency: billingCycle === "yearly" ? "6" : "3", // 6 = Annual, 3 = Monthly
       cycles: "0", // Unlimited cycles
+      // Disable alternative payment methods that might cause issues
+      payment_method: "cc,eft", // Only credit card and EFT
     };
 
     // Generate signature for PayFast - following exact PayFast requirements
