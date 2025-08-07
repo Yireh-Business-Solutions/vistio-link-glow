@@ -33,6 +33,7 @@ const Dashboard = () => {
   const { cards, loading, refetch, deleteCard } = useCards();
   const [activeTab, setActiveTab] = useState("cards");
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingCard, setEditingCard] = useState(null);
 
   const handleSignOut = async () => {
     await signOut();
@@ -62,11 +63,7 @@ const Dashboard = () => {
   };
 
   const handleEditCard = (card: any) => {
-    // You can implement edit functionality here
-    toast({
-      title: "Edit functionality",
-      description: "Edit functionality will be implemented soon."
-    });
+    setEditingCard(card);
   };
 
   const handleShareCard = (card: any) => {
@@ -184,6 +181,31 @@ const Dashboard = () => {
                     }}
                     onCancel={() => setShowCreateForm(false)}
                   />
+                </DialogContent>
+              </Dialog>
+              
+              {/* Edit Card Dialog */}
+              <Dialog open={!!editingCard} onOpenChange={() => setEditingCard(null)}>
+                <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto bg-gradient-hero">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl bg-gradient-primary bg-clip-text text-transparent">
+                      Edit Business Card
+                    </DialogTitle>
+                  </DialogHeader>
+                  {editingCard && (
+                    <CreateCardForm 
+                      initialData={editingCard}
+                      onSuccess={() => {
+                        setEditingCard(null);
+                        refetch();
+                        toast({
+                          title: "Card updated",
+                          description: "Your business card has been updated successfully."
+                        });
+                      }}
+                      onCancel={() => setEditingCard(null)}
+                    />
+                  )}
                 </DialogContent>
               </Dialog>
             </div>

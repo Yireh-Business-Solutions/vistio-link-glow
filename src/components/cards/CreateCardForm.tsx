@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -95,9 +95,10 @@ interface CardData {
 interface CreateCardFormProps {
   onSuccess?: () => void;
   onCancel?: () => void;
+  initialData?: any;
 }
 
-const CreateCardForm = ({ onSuccess, onCancel }: CreateCardFormProps) => {
+const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -148,6 +149,66 @@ const CreateCardForm = ({ onSuccess, onCancel }: CreateCardFormProps) => {
 
   const [customLinks, setCustomLinks] = useState<LinkData[]>([]);
 
+  // Populate form with initial data if editing
+  useEffect(() => {
+    if (initialData) {
+      const visibleSections = typeof initialData.visible_sections === 'object' 
+        ? initialData.visible_sections 
+        : { contact: true, social: true, professional: true, images: true, custom_links: true };
+      
+      const signatureStyle = typeof initialData.signature_style === 'object'
+        ? initialData.signature_style
+        : { background: "gradient", pattern: "none", custom_colors: { primary: null, secondary: null } };
+        
+      const backgroundStyle = typeof initialData.background_style === 'object'
+        ? initialData.background_style
+        : { pattern: "grid", gradient_direction: "diagonal", custom_colors: { start: null, end: null } };
+
+      setFormData({
+        name: initialData.name || "",
+        title: initialData.title || "",
+        company: initialData.company || "",
+        email: initialData.email || "",
+        phone: initialData.phone || "",
+        work_phone: initialData.work_phone || "",
+        whatsapp: initialData.whatsapp || "",
+        address: initialData.address || "",
+        website: initialData.website || "",
+        linkedin_url: initialData.linkedin_url || "",
+        twitter_url: initialData.twitter_url || "",
+        instagram_url: initialData.instagram_url || "",
+        bio: initialData.bio || "",
+        certifications: initialData.certifications || "",
+        awards: initialData.awards || "",
+        specialties: initialData.specialties || "",
+        profile_image_url: initialData.profile_image_url || "",
+        company_logo_url: initialData.company_logo_url || "",
+        image_1_url: initialData.image_1_url || "",
+        image_2_url: initialData.image_2_url || "",
+        image_3_url: initialData.image_3_url || "",
+        image_4_url: initialData.image_4_url || "",
+        image_5_url: initialData.image_5_url || "",
+        color_theme: initialData.color_theme || "neon-blue",
+        profile_image_size: initialData.profile_image_size || "medium",
+        company_logo_size: initialData.company_logo_size || "small",
+        visible_sections: visibleSections,
+        signature_style: signatureStyle,
+        background_style: backgroundStyle
+      });
+
+      // Extract custom links from initial data
+      const links: LinkData[] = [];
+      for (let i = 1; i <= 20; i++) {
+        const title = initialData[`link_${i}_title`];
+        const url = initialData[`link_${i}_url`];
+        if (title && url) {
+          links.push({ title, url });
+        }
+      }
+      setCustomLinks(links);
+    }
+  }, [initialData]);
+
   const colorThemes = [
     { value: "neon-blue", label: "Neon Blue", color: "hsl(195 100% 50%)" },
     { value: "neon-green", label: "Neon Green", color: "hsl(120 100% 50%)" },
@@ -191,17 +252,14 @@ const CreateCardForm = ({ onSuccess, onCancel }: CreateCardFormProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-      console.error("No user found when trying to create card");
+      console.error("No user found when trying to create/update card");
       return;
     }
 
-    console.log("Starting card creation for user:", user.id);
+    console.log(initialData ? "Starting card update" : "Starting card creation", "for user:", user.id);
     setIsLoading(true);
     
     try {
-      const slug = generateSlug(formData.name);
-      console.log("Generated slug:", slug);
-      
       // Prepare links data for database
       const linksData: any = {};
       customLinks.forEach((link, index) => {
@@ -212,38 +270,75 @@ const CreateCardForm = ({ onSuccess, onCancel }: CreateCardFormProps) => {
       });
 
       const cardData = {
-        user_id: user.id,
-        slug,
         ...formData,
         ...linksData
       };
 
-      console.log("Inserting card data:", cardData);
-      
-      const { data, error } = await supabase
-        .from('cards')
-        .insert(cardData)
-        .select();
+      if (initialData) {
+        // Update existing card
+        console.log("Updating card data:", cardData);
+        
+        const { data, error } = await supabase
+          .from('cards')
+          .update(cardData)
+          .eq('id', initialData.id)
+          .select();
 
-      console.log("Card insertion result:", { data, error });
+        console.log("Card update result:", { data, error });
 
-      if (error) {
-        console.error("Database error creating card:", error);
-        toast({
-          title: "Error creating card",
-          description: error.message,
-          variant: "destructive"
-        });
+        if (error) {
+          console.error("Database error updating card:", error);
+          toast({
+            title: "Error updating card",
+            description: error.message,
+            variant: "destructive"
+          });
+        } else {
+          console.log("Card updated successfully:", data);
+          toast({
+            title: "Card updated successfully!",
+            description: "Your digital business card has been updated."
+          });
+          onSuccess?.();
+        }
       } else {
-        console.log("Card created successfully:", data);
-        toast({
-          title: "Card created successfully!",
-          description: "Your digital business card is ready to share."
-        });
-        onSuccess?.();
+        // Create new card
+        const slug = generateSlug(formData.name);
+        console.log("Generated slug:", slug);
+        
+        const newCardData = {
+          user_id: user.id,
+          slug,
+          ...cardData
+        };
+
+        console.log("Inserting card data:", newCardData);
+        
+        const { data, error } = await supabase
+          .from('cards')
+          .insert(newCardData)
+          .select();
+
+        console.log("Card insertion result:", { data, error });
+
+        if (error) {
+          console.error("Database error creating card:", error);
+          toast({
+            title: "Error creating card",
+            description: error.message,
+            variant: "destructive"
+          });
+        } else {
+          console.log("Card created successfully:", data);
+          toast({
+            title: "Card created successfully!",
+            description: "Your digital business card is ready to share."
+          });
+          onSuccess?.();
+        }
       }
     } catch (error) {
-      console.error("Unexpected error creating card:", error);
+      console.error("Unexpected error:", error);
       toast({
         title: "Unexpected error",
         description: "Please try again later.",
@@ -631,7 +726,7 @@ const CreateCardForm = ({ onSuccess, onCancel }: CreateCardFormProps) => {
             <div className="flex gap-3 pt-4">
               <Button type="submit" disabled={isLoading} className="flex-1 bg-gradient-primary hover:shadow-neon transition-all duration-300">
                 <Save className="h-4 w-4 mr-2" />
-                {isLoading ? "Creating..." : "Create Card"}
+                {isLoading ? (initialData ? "Updating..." : "Creating...") : (initialData ? "Update Card" : "Create Card")}
               </Button>
               {onCancel && (
                 <Button type="button" variant="outline" onClick={onCancel}>
