@@ -253,7 +253,30 @@ const Landing = () => {
 
       {/* Footer */}
       <footer className="container mx-auto px-4 py-8 border-t border-border">
-        <div className="flex justify-center items-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          <div>
+            <h3 className="font-semibold mb-4">Contact</h3>
+            <div className="space-y-2 text-muted-foreground">
+              <p>Email: <a href="mailto:info@vistio.co.za" className="hover:text-primary">info@vistio.co.za</a></p>
+              <p>Support: <a href="mailto:support@vistio.co.za" className="hover:text-primary">support@vistio.co.za</a></p>
+            </div>
+          </div>
+          <div>
+            <h3 className="font-semibold mb-4">Product</h3>
+            <div className="space-y-2 text-muted-foreground">
+              <p><a href="/pricing" className="hover:text-primary">Pricing</a></p>
+              <p><a href="/dashboard" className="hover:text-primary">Dashboard</a></p>
+            </div>
+          </div>
+          <div>
+            <h3 className="font-semibold mb-4">Company</h3>
+            <div className="space-y-2 text-muted-foreground">
+              <p>Digital Business Cards</p>
+              <p>Made in South Africa</p>
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-center items-center pt-8 border-t border-border">
           <p className="text-muted-foreground">© 2025 Vistio. All rights reserved.</p>
         </div>
       </footer>

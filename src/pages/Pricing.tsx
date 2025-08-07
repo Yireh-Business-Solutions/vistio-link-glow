@@ -130,7 +130,7 @@ export default function Pricing() {
   };
 
   const handleContactEnterprise = () => {
-    window.location.href = "mailto:sales@cardcrafter.co.za?subject=Enterprise Plan Inquiry";
+    window.location.href = "mailto:info@vistio.co.za?subject=Enterprise Plan Inquiry";
   };
 
   return (

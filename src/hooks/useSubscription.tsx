@@ -67,7 +67,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       setLoading(true);
       
       // Check if user is founder first
-      const founderEmails = ['andre@yireh.co.za', 'dylan@yireh.co.za'];
+      const founderEmails = ['andre@vistio.co.za', 'dylan@vistio.co.za'];
       const isFounder = founderEmails.includes(user.email || '');
       
       if (isFounder) {
