@@ -12,11 +12,6 @@ const Landing = () => {
           <Sparkles className="h-8 w-8 text-neon-blue" />
           <span className="text-2xl font-bold text-foreground">Vistio</span>
         </div>
-        <div className="hidden md:flex items-center space-x-6">
-          <Link to="/pricing" className="text-foreground hover:text-neon-blue transition-colors">
-            Pricing
-          </Link>
-        </div>
         <div className="space-x-4">
           <Link to="/auth">
             <Button variant="outline" className="border-neon-blue text-neon-blue hover:bg-neon-blue hover:text-background">
