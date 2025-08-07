@@ -29,6 +29,7 @@ import ImageUpload from "./ImageUpload";
 import CardCustomization from "./CardCustomization";
 import ImageResizer from "./ImageResizer";
 import StickyEditButton from "./StickyEditButton";
+import LivePreview from "./LivePreview";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -83,6 +84,10 @@ interface CardData {
   awards?: string;
   specialties?: string;
   profile_image_url?: string;
+  profile_image_2_url?: string;
+  profile_image_3_url?: string;
+  profile_image_4_url?: string;
+  profile_image_5_url?: string;
   company_logo_url?: string;
   image_1_url?: string;
   image_2_url?: string;
@@ -92,6 +97,7 @@ interface CardData {
   color_theme: string;
   profile_image_size: string;
   company_logo_size: string;
+  design_variant: string;
   visible_sections: VisibleSections;
   signature_style: SignatureStyle;
   background_style: BackgroundStyle;
@@ -132,6 +138,7 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
     color_theme: "neon-blue",
     profile_image_size: "medium",
     company_logo_size: "small",
+    design_variant: "classic",
     visible_sections: {
       contact: true,
       social: true,
@@ -193,6 +200,10 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
         awards: initialData.awards || "",
         specialties: initialData.specialties || "",
         profile_image_url: initialData.profile_image_url || "",
+        profile_image_2_url: initialData.profile_image_2_url || "",
+        profile_image_3_url: initialData.profile_image_3_url || "",
+        profile_image_4_url: initialData.profile_image_4_url || "",
+        profile_image_5_url: initialData.profile_image_5_url || "",
         company_logo_url: initialData.company_logo_url || "",
         image_1_url: initialData.image_1_url || "",
         image_2_url: initialData.image_2_url || "",
@@ -202,6 +213,7 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
         color_theme: initialData.color_theme || "neon-blue",
         profile_image_size: initialData.profile_image_size || "medium",
         company_logo_size: initialData.company_logo_size || "small",
+        design_variant: initialData.design_variant || "classic",
         visible_sections: visibleSections,
         signature_style: signatureStyle,
         background_style: backgroundStyle
@@ -410,6 +422,17 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Form */}
         <div className="space-y-6">
+          {/* Live Preview for editing mode */}
+          {initialData && (
+            <Card className="bg-card/50 backdrop-blur-sm border-border">
+              <CardHeader>
+                <CardTitle>Live Preview</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <LivePreview formData={formData} customLinks={customLinks} />
+              </CardContent>
+            </Card>
+          )}
           <Card className="bg-card/50 backdrop-blur-sm border-border">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -676,13 +699,28 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
                 <h3 className="text-lg font-semibold">Images</h3>
                 
                 <div className="space-y-4">
-                  <ImageUpload
-                    bucketName="card-images"
-                    currentUrl={formData.profile_image_url}
-                    onUpload={(url) => handleInputChange('profile_image_url', url)}
-                    onRemove={() => handleInputChange('profile_image_url', '')}
-                    label="Profile Image"
-                  />
+                  {/* Profile Images */}
+                  <div className="space-y-3">
+                    <h4 className="font-semibold text-sm">Profile Images (up to 5)</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                      {[1, 2, 3, 4, 5].map((num) => (
+                        <ImageUpload
+                          key={num}
+                          bucketName="card-images"
+                          currentUrl={num === 1 ? formData.profile_image_url : formData[`profile_image_${num}_url` as keyof CardData] as string}
+                          onUpload={(url) => {
+                            const field = num === 1 ? 'profile_image_url' : `profile_image_${num}_url` as keyof CardData;
+                            handleInputChange(field, url);
+                          }}
+                          onRemove={() => {
+                            const field = num === 1 ? 'profile_image_url' : `profile_image_${num}_url` as keyof CardData;
+                            handleInputChange(field, '');
+                          }}
+                          label={`Profile Image ${num}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
 
                   <ImageUpload
                     bucketName="company-logos"
@@ -692,17 +730,20 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
                     label="Company Logo"
                   />
 
-                  <div className="grid grid-cols-2 gap-4">
-                    {[1, 2, 3, 4, 5].map((num) => (
-                      <ImageUpload
-                        key={num}
-                        bucketName="card-images"
-                        currentUrl={formData[`image_${num}_url` as keyof CardData] as string}
-                        onUpload={(url) => handleInputChange(`image_${num}_url` as keyof CardData, url)}
-                        onRemove={() => handleInputChange(`image_${num}_url` as keyof CardData, '')}
-                        label={`Gallery Image ${num}`}
-                      />
-                    ))}
+                  <div className="space-y-3">
+                    <h4 className="font-semibold text-sm">Gallery Images</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                      {[1, 2, 3, 4, 5].map((num) => (
+                        <ImageUpload
+                          key={num}
+                          bucketName="card-images"
+                          currentUrl={formData[`image_${num}_url` as keyof CardData] as string}
+                          onUpload={(url) => handleInputChange(`image_${num}_url` as keyof CardData, url)}
+                          onRemove={() => handleInputChange(`image_${num}_url` as keyof CardData, '')}
+                          label={`Gallery Image ${num}`}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -765,9 +806,10 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
 
               <Separator />
 
-              {/* Color Theme */}
+              {/* Theme & Design */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Theme</h3>
+                <h3 className="text-lg font-semibold">Theme & Design</h3>
+                
                 <div className="space-y-2">
                   <Label>Color Theme</Label>
                   <Select value={formData.color_theme} onValueChange={(value) => handleInputChange('color_theme', value)}>
@@ -786,6 +828,22 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
                           </div>
                         </SelectItem>
                       ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Design Variant</Label>
+                  <Select value={formData.design_variant} onValueChange={(value) => handleInputChange('design_variant', value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="classic">Classic - Clean rectangular design</SelectItem>
+                      <SelectItem value="wavy1">Wavy 1 - Subtle curved bottom</SelectItem>
+                      <SelectItem value="wavy2">Wavy 2 - Pronounced curved waves</SelectItem>
+                      <SelectItem value="wavy3">Wavy 3 - Dynamic wave pattern</SelectItem>
+                      <SelectItem value="angular">Angular - Sharp geometric design</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -847,97 +905,7 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div 
-              className="p-6 rounded-lg border-2 transition-all duration-300"
-              style={{ 
-                borderColor: selectedTheme?.color,
-                boxShadow: `0 0 20px ${selectedTheme?.color}30`
-              }}
-            >
-              <div className="text-center space-y-4">
-                {/* Profile Picture Placeholder */}
-                <div 
-                  className="w-24 h-24 rounded-full mx-auto border-2 flex items-center justify-center"
-                  style={{ borderColor: selectedTheme?.color }}
-                >
-                  <User className="h-12 w-12 text-muted-foreground" />
-                </div>
-
-                {/* Name and Title */}
-                <div>
-                  <h2 className="text-2xl font-bold">
-                    {formData.name || "Your Name"}
-                  </h2>
-                  {formData.title && (
-                    <p className="text-muted-foreground">{formData.title}</p>
-                  )}
-                  {formData.company && (
-                    <p className="text-sm text-muted-foreground">{formData.company}</p>
-                  )}
-                </div>
-
-                {/* Contact Info */}
-                <div className="space-y-2 text-sm">
-                  {formData.email && (
-                    <div className="flex items-center justify-center gap-2">
-                      <Mail className="h-4 w-4" style={{ color: selectedTheme?.color }} />
-                      <span>{formData.email}</span>
-                    </div>
-                  )}
-                  {formData.phone && (
-                    <div className="flex items-center justify-center gap-2">
-                      <Phone className="h-4 w-4" style={{ color: selectedTheme?.color }} />
-                      <span>{formData.phone}</span>
-                    </div>
-                  )}
-                  {formData.website && (
-                    <div className="flex items-center justify-center gap-2">
-                      <Globe className="h-4 w-4" style={{ color: selectedTheme?.color }} />
-                      <span className="truncate">{formData.website}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Social Links */}
-                <div className="flex justify-center gap-3 pt-2">
-                  {formData.linkedin_url && (
-                    <Badge variant="outline" style={{ borderColor: selectedTheme?.color }}>
-                      <Linkedin className="h-3 w-3 mr-1" />
-                      LinkedIn
-                    </Badge>
-                  )}
-                  {formData.twitter_url && (
-                    <Badge variant="outline" style={{ borderColor: selectedTheme?.color }}>
-                      <X className="h-3 w-3 mr-1" />
-                      X
-                    </Badge>
-                  )}
-                  {formData.instagram_url && (
-                    <Badge variant="outline" style={{ borderColor: selectedTheme?.color }}>
-                      <Instagram className="h-3 w-3 mr-1" />
-                      Instagram
-                    </Badge>
-                  )}
-                  {formData.facebook_url && (
-                    <Badge variant="outline" style={{ borderColor: selectedTheme?.color }}>
-                      <Facebook className="h-3 w-3 mr-1" />
-                      Facebook
-                    </Badge>
-                  )}
-                </div>
-
-                {/* Action Buttons Preview */}
-                <div className="flex gap-2 pt-4">
-                  <Button size="sm" variant="outline" className="flex-1">
-                    <Share className="h-3 w-3 mr-1" />
-                    Share
-                  </Button>
-                  <Button size="sm" variant="outline" className="flex-1">
-                    Save Contact
-                  </Button>
-                </div>
-              </div>
-            </div>
+            <LivePreview formData={formData} customLinks={customLinks} />
           </CardContent>
         </Card>
       </div>

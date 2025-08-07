@@ -246,37 +246,8 @@ const PublicCard = () => {
 
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         {/* Professional Business Card Layout */}
-        <div className="max-w-md mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
-          {/* Header Section with Profile Image */}
-          <div className={`relative h-80 ${getThemeGradient(card.color_theme)}`}>
-            <div className="absolute inset-0 bg-black/10"></div>
-            
-            {/* Company Logo */}
-            {card.company_logo_url && (
-              <div className="absolute top-4 right-4">
-                <img
-                  src={card.company_logo_url}
-                  alt={`${card.company} logo`}
-                  className="w-16 h-16 bg-white rounded-lg p-2 shadow-lg object-contain"
-                />
-              </div>
-            )}
-            
-            {/* Large Profile Image */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              {card.profile_image_url ? (
-                <img
-                  src={card.profile_image_url}
-                  alt={card.name}
-                  className="w-48 h-48 rounded-2xl object-cover shadow-2xl border-4 border-white/20"
-                />
-              ) : (
-                <div className="w-48 h-48 rounded-2xl bg-white/90 flex items-center justify-center shadow-2xl">
-                  <User className="w-24 h-24 text-gray-400" />
-                </div>
-              )}
-            </div>
-          </div>
+        <LivePreview formData={card} customLinks={[]} />
+      </div>
 
           {/* Content Section */}
           <div className="px-6 py-6">
