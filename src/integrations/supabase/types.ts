@@ -18,11 +18,13 @@ export type Database = {
         Row: {
           address: string | null
           awards: string | null
+          background_style: Json | null
           bio: string | null
           certifications: string | null
           color_theme: string | null
           company: string | null
           company_logo: string | null
+          company_logo_size: string | null
           company_logo_url: string | null
           created_at: string
           email: string | null
@@ -78,7 +80,9 @@ export type Database = {
           name: string
           org_id: string | null
           phone: string | null
+          profile_image_size: string | null
           profile_image_url: string | null
+          signature_style: Json | null
           slug: string | null
           specialties: string | null
           title: string | null
@@ -86,6 +90,7 @@ export type Database = {
           updated_at: string
           user_id: string
           view_count: number | null
+          visible_sections: Json | null
           website: string | null
           whatsapp: string | null
           work_phone: string | null
@@ -93,11 +98,13 @@ export type Database = {
         Insert: {
           address?: string | null
           awards?: string | null
+          background_style?: Json | null
           bio?: string | null
           certifications?: string | null
           color_theme?: string | null
           company?: string | null
           company_logo?: string | null
+          company_logo_size?: string | null
           company_logo_url?: string | null
           created_at?: string
           email?: string | null
@@ -153,7 +160,9 @@ export type Database = {
           name: string
           org_id?: string | null
           phone?: string | null
+          profile_image_size?: string | null
           profile_image_url?: string | null
+          signature_style?: Json | null
           slug?: string | null
           specialties?: string | null
           title?: string | null
@@ -161,6 +170,7 @@ export type Database = {
           updated_at?: string
           user_id: string
           view_count?: number | null
+          visible_sections?: Json | null
           website?: string | null
           whatsapp?: string | null
           work_phone?: string | null
@@ -168,11 +178,13 @@ export type Database = {
         Update: {
           address?: string | null
           awards?: string | null
+          background_style?: Json | null
           bio?: string | null
           certifications?: string | null
           color_theme?: string | null
           company?: string | null
           company_logo?: string | null
+          company_logo_size?: string | null
           company_logo_url?: string | null
           created_at?: string
           email?: string | null
@@ -228,7 +240,9 @@ export type Database = {
           name?: string
           org_id?: string | null
           phone?: string | null
+          profile_image_size?: string | null
           profile_image_url?: string | null
+          signature_style?: Json | null
           slug?: string | null
           specialties?: string | null
           title?: string | null
@@ -236,6 +250,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
           view_count?: number | null
+          visible_sections?: Json | null
           website?: string | null
           whatsapp?: string | null
           work_phone?: string | null

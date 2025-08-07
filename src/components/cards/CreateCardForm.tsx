@@ -7,8 +7,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Save, Eye, Share, User, Mail, Phone, MapPin, Globe, Linkedin, Twitter, Instagram, Plus, X } from "lucide-react";
+import { 
+  Save, 
+  Eye, 
+  Share, 
+  User, 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Globe, 
+  Linkedin, 
+  Twitter, 
+  Instagram, 
+  Plus, 
+  X,
+  Settings
+} from "lucide-react";
 import ImageUpload from "./ImageUpload";
+import CardCustomization from "./CardCustomization";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -16,6 +32,32 @@ import { useToast } from "@/hooks/use-toast";
 interface LinkData {
   title: string;
   url: string;
+}
+
+interface VisibleSections {
+  contact: boolean;
+  social: boolean;
+  professional: boolean;
+  images: boolean;
+  custom_links: boolean;
+}
+
+interface SignatureStyle {
+  background: 'gradient' | 'solid' | 'pattern';
+  pattern: 'none' | 'dots' | 'grid' | 'waves';
+  custom_colors: {
+    primary: string | null;
+    secondary: string | null;
+  };
+}
+
+interface BackgroundStyle {
+  pattern: 'grid' | 'dots' | 'waves' | 'hexagon' | 'circuit';
+  gradient_direction: 'horizontal' | 'vertical' | 'diagonal' | 'radial';
+  custom_colors: {
+    start: string | null;
+    end: string | null;
+  };
 }
 
 interface CardData {
@@ -43,6 +85,11 @@ interface CardData {
   image_4_url?: string;
   image_5_url?: string;
   color_theme: string;
+  profile_image_size: string;
+  company_logo_size: string;
+  visible_sections: VisibleSections;
+  signature_style: SignatureStyle;
+  background_style: BackgroundStyle;
 }
 
 interface CreateCardFormProps {
@@ -71,7 +118,32 @@ const CreateCardForm = ({ onSuccess, onCancel }: CreateCardFormProps) => {
     certifications: "",
     awards: "",
     specialties: "",
-    color_theme: "neon-blue"
+    color_theme: "neon-blue",
+    profile_image_size: "medium",
+    company_logo_size: "small",
+    visible_sections: {
+      contact: true,
+      social: true,
+      professional: true,
+      images: true,
+      custom_links: true
+    },
+    signature_style: {
+      background: "gradient",
+      pattern: "none",
+      custom_colors: {
+        primary: null,
+        secondary: null
+      }
+    },
+    background_style: {
+      pattern: "grid",
+      gradient_direction: "diagonal",
+      custom_colors: {
+        start: null,
+        end: null
+      }
+    }
   });
 
   const [customLinks, setCustomLinks] = useState<LinkData[]>([]);
@@ -83,7 +155,7 @@ const CreateCardForm = ({ onSuccess, onCancel }: CreateCardFormProps) => {
     { value: "neon-pink", label: "Neon Pink", color: "hsl(320 100% 70%)" }
   ];
 
-  const handleInputChange = (field: keyof CardData, value: string) => {
+  const handleInputChange = (field: keyof CardData, value: string | VisibleSections | SignatureStyle | BackgroundStyle) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -187,18 +259,19 @@ const CreateCardForm = ({ onSuccess, onCancel }: CreateCardFormProps) => {
   return (
     <div className="grid lg:grid-cols-2 gap-8">
       {/* Form */}
-      <Card className="bg-card/50 backdrop-blur-sm border-border">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5 text-neon-blue" />
-            Create Business Card
-          </CardTitle>
-          <CardDescription>
-            Fill in your information to create your digital business card
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-6">
+        <Card className="bg-card/50 backdrop-blur-sm border-border">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User className="h-5 w-5 text-neon-blue" />
+              Create Business Card
+            </CardTitle>
+            <CardDescription>
+              Fill in your information to create your digital business card
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Information */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Basic Information</h3>
@@ -566,9 +639,37 @@ const CreateCardForm = ({ onSuccess, onCancel }: CreateCardFormProps) => {
                 </Button>
               )}
             </div>
-          </form>
-        </CardContent>
-      </Card>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Customization Options */}
+        <Card className="bg-card/50 backdrop-blur-sm border-border">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Settings className="h-5 w-5 text-neon-purple" />
+              Customization Options
+            </CardTitle>
+            <CardDescription>
+              Customize your card layout, signature style, and virtual backgrounds
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CardCustomization
+              profileImageSize={formData.profile_image_size}
+              companyLogoSize={formData.company_logo_size}
+              visibleSections={formData.visible_sections}
+              signatureStyle={formData.signature_style}
+              backgroundStyle={formData.background_style}
+              onProfileImageSizeChange={(size) => handleInputChange('profile_image_size', size)}
+              onCompanyLogoSizeChange={(size) => handleInputChange('company_logo_size', size)}
+              onVisibleSectionsChange={(sections) => handleInputChange('visible_sections', sections)}
+              onSignatureStyleChange={(style) => handleInputChange('signature_style', style)}
+              onBackgroundStyleChange={(style) => handleInputChange('background_style', style)}
+            />
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Preview */}
       <Card className="bg-card/50 backdrop-blur-sm border-border">

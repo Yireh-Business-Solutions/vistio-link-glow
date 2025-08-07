@@ -29,30 +29,41 @@ const ResourcesGenerator = ({ card }: ResourcesGeneratorProps) => {
   };
 
   const generateEmailSignature = () => {
-    const themeColor = getThemeColor(card.color_theme);
+    const style = card.signature_style || { background: 'gradient', pattern: 'none', custom_colors: { primary: null, secondary: null } };
+    const primaryColor = style.custom_colors?.primary || getThemeColor(card.color_theme);
+    const secondaryColor = style.custom_colors?.secondary || '#ffffff';
     const cardUrl = `${window.location.origin}/card/${card.slug}`;
     
+    let backgroundStyle = '';
+    if (style.background === 'gradient') {
+      backgroundStyle = `background: linear-gradient(135deg, ${primaryColor}20, ${secondaryColor}20); border-radius: 8px; padding: 15px;`;
+    } else if (style.background === 'solid') {
+      backgroundStyle = `background-color: ${primaryColor}10; border-radius: 8px; padding: 15px;`;
+    } else if (style.background === 'pattern' && style.pattern !== 'none') {
+      backgroundStyle = `background-color: ${secondaryColor}10; border-radius: 8px; padding: 15px;`;
+    }
+    
     const signature = `
-<div style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.4; color: #333;">
+<div style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.4; color: #333; ${backgroundStyle}">
   <table cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse;">
     <tr>
       <td style="padding-right: 20px; vertical-align: top;">
         ${card.profile_image_url ? 
-          `<img src="${card.profile_image_url}" alt="${card.name}" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid ${themeColor};" />` :
-          `<div style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid ${themeColor}; background: linear-gradient(135deg, ${themeColor}30, ${themeColor}10); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: ${themeColor};">${card.name.charAt(0)}</div>`
+          `<img src="${card.profile_image_url}" alt="${card.name}" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid ${primaryColor};" />` :
+          `<div style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid ${primaryColor}; background: linear-gradient(135deg, ${primaryColor}30, ${primaryColor}10); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: ${primaryColor};">${card.name.charAt(0)}</div>`
         }
       </td>
       <td style="vertical-align: top;">
         <div style="margin-bottom: 5px;">
-          <strong style="font-size: 16px; color: ${themeColor};">${card.name}</strong>
+          <strong style="font-size: 16px; color: ${primaryColor};">${card.name}</strong>
         </div>
         ${card.title ? `<div style="margin-bottom: 3px; color: #666;">${card.title}</div>` : ''}
         ${card.company ? `<div style="margin-bottom: 8px; color: #666;">${card.company}</div>` : ''}
-        ${card.email ? `<div style="margin-bottom: 3px;"><a href="mailto:${card.email}" style="color: ${themeColor}; text-decoration: none;">${card.email}</a></div>` : ''}
-        ${card.phone ? `<div style="margin-bottom: 3px;"><a href="tel:${card.phone}" style="color: ${themeColor}; text-decoration: none;">${card.phone}</a></div>` : ''}
-        ${card.website ? `<div style="margin-bottom: 8px;"><a href="${card.website.startsWith('http') ? card.website : `https://${card.website}`}" style="color: ${themeColor}; text-decoration: none;">${card.website}</a></div>` : ''}
+        ${card.email ? `<div style="margin-bottom: 3px;"><a href="mailto:${card.email}" style="color: ${primaryColor}; text-decoration: none;">${card.email}</a></div>` : ''}
+        ${card.phone ? `<div style="margin-bottom: 3px;"><a href="tel:${card.phone}" style="color: ${primaryColor}; text-decoration: none;">${card.phone}</a></div>` : ''}
+        ${card.website ? `<div style="margin-bottom: 8px;"><a href="${card.website.startsWith('http') ? card.website : `https://${card.website}`}" style="color: ${primaryColor}; text-decoration: none;">${card.website}</a></div>` : ''}
         <div style="margin-top: 10px;">
-          <a href="${cardUrl}" style="background: ${themeColor}; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 12px; display: inline-block;">View Digital Card</a>
+          <a href="${cardUrl}" style="background: ${primaryColor}; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 12px; display: inline-block;">View Digital Card →</a>
         </div>
       </td>
     </tr>
