@@ -165,7 +165,7 @@ export default function SubscriptionManagement() {
             {subscription_tier === 'free' ? 'Upgrade Plan' : 'Change Plan'}
           </Button>
           {subscribed && (
-            <Button variant="outline" onClick={() => window.open('https://sandbox.payfast.co.za/user/login', '_blank')}>
+            <Button variant="outline" onClick={() => window.open('https://www.payfast.co.za/user/login', '_blank')}>
               Manage Billing
             </Button>
           )}

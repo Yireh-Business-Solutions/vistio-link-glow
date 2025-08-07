@@ -68,11 +68,11 @@ serve(async (req) => {
     const signatureString = dataString + `&passphrase=${encodeURIComponent(passphrase)}`;
     const calculatedSignature = md5(signatureString);
 
-    // For sandbox mode, we can skip signature verification temporarily
-    // if (receivedSignature !== calculatedSignature) {
-    //   logStep("Invalid signature", { received: receivedSignature, calculated: calculatedSignature });
-    //   return new Response("Invalid signature", { status: 400 });
-    // }
+    // Verify signature for production
+    if (receivedSignature !== calculatedSignature) {
+      logStep("Invalid signature", { received: receivedSignature, calculated: calculatedSignature });
+      return new Response("Invalid signature", { status: 400 });
+    }
 
     logStep("Signature verified");
 

@@ -26,6 +26,9 @@ import CreateCardForm from "@/components/cards/CreateCardForm";
 import CardTemplates from "@/components/cards/CardTemplates";
 import ResourcesGenerator from "@/components/resources/ResourcesGenerator";
 import SubscriptionManagement from "@/components/SubscriptionManagement";
+import ContactsList from "@/components/contacts/ContactsList";
+import AnalyticsCharts from "@/components/analytics/AnalyticsCharts";
+import CardDuplication from "@/components/cards/CardDuplication";
 import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
@@ -323,16 +326,20 @@ const Dashboard = () => {
                           <p>Created: {new Date(card.created_at).toLocaleDateString()}</p>
                         </div>
 
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 flex-wrap">
                           <Button 
                             size="sm" 
                             variant="outline" 
-                            className="flex-1"
+                            className="flex-1 min-w-16"
                             onClick={() => handleEditCard(card)}
                           >
                             <Edit className="h-3 w-3 mr-1" />
                             Edit
                           </Button>
+                          <CardDuplication 
+                            card={card} 
+                            onSuccess={() => refetch()} 
+                          />
                           <Button 
                             size="sm" 
                             variant="outline" 
@@ -369,17 +376,7 @@ const Dashboard = () => {
           {/* Contacts Tab */}
           <TabsContent value="contacts" className="space-y-6">
             <h2 className="text-2xl font-semibold">Contacts & Connections</h2>
-            <Card className="bg-card/50 backdrop-blur-sm border-border">
-              <CardContent className="p-6">
-                <div className="text-center py-12">
-                  <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No contacts yet</h3>
-                  <p className="text-muted-foreground">
-                    When people share their information through your business card, they'll appear here.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <ContactsList />
           </TabsContent>
 
           {/* Resources Tab */}
@@ -420,37 +417,7 @@ const Dashboard = () => {
           {/* Analytics Tab */}
           <TabsContent value="analytics" className="space-y-6">
             <h2 className="text-2xl font-semibold">Analytics</h2>
-            <div className="grid gap-6 md:grid-cols-3">
-              <Card className="bg-card/50 backdrop-blur-sm border-border">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Card Views</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-neon-blue">0</div>
-                  <p className="text-xs text-muted-foreground">This month</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-card/50 backdrop-blur-sm border-border">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">New Contacts</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-neon-green">0</div>
-                  <p className="text-xs text-muted-foreground">This month</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-card/50 backdrop-blur-sm border-border">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Share Rate</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-neon-purple">0%</div>
-                  <p className="text-xs text-muted-foreground">This month</p>
-                </CardContent>
-              </Card>
-            </div>
+            <AnalyticsCharts />
           </TabsContent>
 
           {/* Settings Tab */}

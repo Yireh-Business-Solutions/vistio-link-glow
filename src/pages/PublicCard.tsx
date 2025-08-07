@@ -60,11 +60,20 @@ const PublicCard = () => {
           setCard(null);
         } else {
           setCard(data);
-          // Increment view count
+          // Increment view count and track analytics
+          const newViewCount = (data.view_count || 0) + 1;
           await supabase
             .from('cards')
-            .update({ view_count: (data.view_count || 0) + 1 })
+            .update({ view_count: newViewCount })
             .eq('id', data.id);
+          
+          // Log analytics event (could be expanded to separate analytics table)
+          console.log('Card view tracked:', {
+            cardId: data.id,
+            cardName: data.name,
+            viewCount: newViewCount,
+            timestamp: new Date().toISOString()
+          });
           
           // Generate QR code
           const cardUrl = window.location.href;
@@ -122,7 +131,8 @@ const PublicCard = () => {
           name: contactForm.name,
           email: contactForm.email,
           phone: contactForm.phone,
-          message: contactForm.message
+          message: contactForm.message,
+          source: 'card_form'
         });
 
       if (error) {
