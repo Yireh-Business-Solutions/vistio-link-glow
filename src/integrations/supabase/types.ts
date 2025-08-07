@@ -27,6 +27,7 @@ export type Database = {
           company_logo_size: string | null
           company_logo_url: string | null
           created_at: string
+          design_variant: string | null
           email: string | null
           facebook_url: string | null
           id: string
@@ -81,6 +82,10 @@ export type Database = {
           name: string
           org_id: string | null
           phone: string | null
+          profile_image_2_url: string | null
+          profile_image_3_url: string | null
+          profile_image_4_url: string | null
+          profile_image_5_url: string | null
           profile_image_size: string | null
           profile_image_url: string | null
           signature_style: Json | null
@@ -108,6 +113,7 @@ export type Database = {
           company_logo_size?: string | null
           company_logo_url?: string | null
           created_at?: string
+          design_variant?: string | null
           email?: string | null
           facebook_url?: string | null
           id?: string
@@ -162,6 +168,10 @@ export type Database = {
           name: string
           org_id?: string | null
           phone?: string | null
+          profile_image_2_url?: string | null
+          profile_image_3_url?: string | null
+          profile_image_4_url?: string | null
+          profile_image_5_url?: string | null
           profile_image_size?: string | null
           profile_image_url?: string | null
           signature_style?: Json | null
@@ -189,6 +199,7 @@ export type Database = {
           company_logo_size?: string | null
           company_logo_url?: string | null
           created_at?: string
+          design_variant?: string | null
           email?: string | null
           facebook_url?: string | null
           id?: string
@@ -243,6 +254,10 @@ export type Database = {
           name?: string
           org_id?: string | null
           phone?: string | null
+          profile_image_2_url?: string | null
+          profile_image_3_url?: string | null
+          profile_image_4_url?: string | null
+          profile_image_5_url?: string | null
           profile_image_size?: string | null
           profile_image_url?: string | null
           signature_style?: Json | null

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { User, Mail, Phone, MapPin, Globe, Linkedin, X, Instagram, Facebook, MessageCircle, ExternalLink } from "lucide-react";
+import "./wavy-styles.css";
 
 interface LivePreviewProps {
   formData: any;

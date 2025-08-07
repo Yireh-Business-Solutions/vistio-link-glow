@@ -1,0 +1,8 @@
+/* Custom CSS for wavy designs */
+.clip-path-wave {
+  clip-path: polygon(0 85%, 100% 95%, 100% 100%, 0% 100%);
+}
+
+.clip-path-triangle {
+  clip-path: polygon(0 70%, 100% 85%, 100% 100%, 0% 100%);
+}
