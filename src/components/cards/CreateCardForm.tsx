@@ -422,17 +422,6 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Form */}
         <div className="space-y-6">
-          {/* Live Preview for editing mode */}
-          {initialData && (
-            <Card className="bg-card/50 backdrop-blur-sm border-border">
-              <CardHeader>
-                <CardTitle>Live Preview</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <LivePreview formData={formData} customLinks={customLinks} />
-              </CardContent>
-            </Card>
-          )}
           <Card className="bg-card/50 backdrop-blur-sm border-border">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -893,21 +882,23 @@ const CreateCardForm = ({ onSuccess, onCancel, initialData }: CreateCardFormProp
           </Card>
         </div>
 
-        {/* Preview */}
-        <Card className="bg-card/50 backdrop-blur-sm border-border">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Eye className="h-5 w-5 text-neon-green" />
-              Live Preview
-            </CardTitle>
-            <CardDescription>
-              See how your card will look to others
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <LivePreview formData={formData} customLinks={customLinks} />
-          </CardContent>
-        </Card>
+        {/* Sticky Preview */}
+        <div className="sticky top-4 h-fit">
+          <Card className="bg-card/50 backdrop-blur-sm border-border">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Eye className="h-5 w-5 text-neon-green" />
+                Live Preview
+              </CardTitle>
+              <CardDescription>
+                See how your card will look to others
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <LivePreview formData={formData} customLinks={customLinks} />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </>
   );

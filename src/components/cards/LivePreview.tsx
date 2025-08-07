@@ -138,6 +138,34 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
                 </div>
               </div>
             )}
+
+            {formData.work_phone && (
+              <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
+                    <Phone className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{formData.work_phone}</p>
+                    <p className="text-xs text-gray-500">work</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {formData.whatsapp && (
+              <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                    <MessageCircle className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{formData.whatsapp}</p>
+                    <p className="text-xs text-gray-500">WhatsApp</p>
+                  </div>
+                </div>
+              </div>
+            )}
             
             {formData.email && (
               <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
@@ -147,6 +175,34 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">{formData.email}</p>
+                    <p className="text-xs text-gray-500">work</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {formData.website && (
+              <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
+                    <Globe className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{formData.website}</p>
+                    <p className="text-xs text-gray-500">website</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {formData.address && (
+              <div className="flex items-start justify-between bg-gray-50 rounded-lg p-3">
+                <div className="flex items-start space-x-3">
+                  <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
+                    <MapPin className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 leading-relaxed">{formData.address}</p>
                     <p className="text-xs text-gray-500">work</p>
                   </div>
                 </div>
@@ -199,6 +255,99 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
                 </div>
               </div>
             )}
+
+            {formData.instagram_url && (
+              <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-pink-500 rounded-full flex items-center justify-center">
+                    <Instagram className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Instagram Profile</p>
+                    <p className="text-xs text-gray-500">social</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Professional Details */}
+        {formData.visible_sections?.professional && (
+          <div className="mb-6">
+            {/* Certifications */}
+            {formData.certifications && (
+              <div className="mb-4">
+                <h4 className="text-sm font-medium text-gray-900 mb-2">Certifications</h4>
+                <div className="flex flex-wrap gap-2">
+                  {formData.certifications.split(',').map((cert, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full"
+                    >
+                      {cert.trim()}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Awards */}
+            {formData.awards && (
+              <div className="mb-4">
+                <h4 className="text-sm font-medium text-gray-900 mb-2">Awards</h4>
+                <div className="flex flex-wrap gap-2">
+                  {formData.awards.split(',').map((award, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full"
+                    >
+                      {award.trim()}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Specialties */}
+            {formData.specialties && (
+              <div className="mb-4">
+                <h4 className="text-sm font-medium text-gray-900 mb-2">Specialties</h4>
+                <div className="flex flex-wrap gap-2">
+                  {formData.specialties.split(',').map((specialty, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full"
+                    >
+                      {specialty.trim()}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Custom Links */}
+        {formData.visible_sections?.custom_links && customLinks.length > 0 && (
+          <div className="mb-6">
+            <h4 className="text-sm font-medium text-gray-900 mb-3">Links</h4>
+            <div className="space-y-3">
+              {customLinks.map((link, index) => (
+                <div key={index} className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center">
+                      <ExternalLink className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{link.title}</p>
+                      <p className="text-xs text-gray-500">custom link</p>
+                    </div>
+                  </div>
+                  <ExternalLink className="w-4 h-4 text-gray-400" />
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
