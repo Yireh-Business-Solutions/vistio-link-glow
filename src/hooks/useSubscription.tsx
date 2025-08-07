@@ -65,6 +65,30 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
 
     try {
       setLoading(true);
+      
+      // Check if user is founder first
+      const founderEmails = ['andre@yireh.co.za', 'dylan@yireh.co.za'];
+      const isFounder = founderEmails.includes(user.email || '');
+      
+      if (isFounder) {
+        setSubscribed(true);
+        setSubscriptionTier("founder");
+        setSubscriptionEnd(null);
+        setLimits({
+          max_cards: 999999,
+          max_profile_images: 999999,
+          max_gallery_images: 999999,
+          max_custom_links: 999999,
+          design_variants_count: 999999,
+          visible_sections_enabled: true,
+          signatures_enabled: true,
+          backgrounds_enabled: true,
+          subscription_tier: "founder"
+        });
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('check-subscription');
       
       if (error) {
