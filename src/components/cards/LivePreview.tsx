@@ -31,10 +31,10 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
 
   const getThemeGradient = (theme: string | null) => {
     const gradients = {
-      'neon-blue': 'bg-gradient-to-br from-blue-500 to-blue-700',
-      'neon-green': 'bg-gradient-to-br from-green-500 to-green-700',
-      'neon-purple': 'bg-gradient-to-br from-purple-500 to-purple-700',
-      'neon-pink': 'bg-gradient-to-br from-pink-500 to-pink-700'
+      'neon-blue': 'bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700',
+      'neon-green': 'bg-gradient-to-br from-green-500 via-green-600 to-green-700',
+      'neon-purple': 'bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700',
+      'neon-pink': 'bg-gradient-to-br from-pink-500 via-pink-600 to-pink-700'
     };
     return gradients[(theme || 'neon-blue') as keyof typeof gradients] || gradients['neon-blue'];
   };
@@ -42,13 +42,25 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
   const getWavyDesign = (variant: string) => {
     const designs = {
       classic: "",
-      modern: "relative before:absolute before:bottom-0 before:left-0 before:right-0 before:h-24 before:bg-gradient-to-t before:from-white before:to-transparent before:z-10",
-      professional: "relative before:absolute before:bottom-0 before:left-0 before:right-0 before:h-16 before:bg-white before:rounded-t-[60px] before:z-10",
-      creative: "relative before:absolute before:bottom-0 before:left-0 before:right-0 before:h-20 before:bg-white before:z-10 before:clip-path-wave",
-      executive: "relative before:absolute before:bottom-0 before:left-0 before:right-0 before:h-12 before:bg-gradient-to-r before:from-white/90 before:via-white before:to-white/90 before:z-10",
+      modern: "relative before:absolute before:bottom-0 before:left-0 before:right-0 before:h-24 before:bg-gradient-to-t before:from-white/95 before:via-white/80 before:to-transparent before:z-10",
+      professional: "relative before:absolute before:bottom-0 before:left-0 before:right-0 before:h-20 before:bg-white before:rounded-t-[80px_80px] before:z-10 before:shadow-[0_-10px_30px_rgba(0,0,0,0.1)]",
+      creative: "relative before:absolute before:bottom-0 before:left-0 before:right-0 before:h-24 before:bg-white before:z-10 before:clip-path-[polygon(0%_40%,15%_25%,35%_35%,60%_15%,80%_30%,100%_20%,100%_100%,0%_100%)]",
+      executive: "relative before:absolute before:bottom-0 before:left-0 before:right-0 before:h-16 before:bg-gradient-to-r before:from-white/90 before:via-white before:to-white/90 before:z-10 before:shadow-[0_-5px_20px_rgba(0,0,0,0.1)]",
       minimal: "relative before:absolute before:bottom-0 before:left-0 before:right-0 before:h-8 before:bg-white before:z-10"
     };
     return designs[variant as keyof typeof designs] || designs.classic;
+  };
+
+  const getHeaderHeight = (variant: string) => {
+    const heights = {
+      classic: "h-96",
+      modern: "h-[28rem]",
+      professional: "h-80",
+      creative: "h-96",
+      executive: "h-72",
+      minimal: "h-64"
+    };
+    return heights[variant as keyof typeof heights] || heights.classic;
   };
 
   const getLogoPosition = (variant: string) => {
@@ -66,8 +78,8 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
   return (
     <div className="max-w-md mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
       {/* Header Section with Full-Width Profile Image */}
-      <div className={`relative h-96 ${getThemeGradient(formData.color_theme)} ${getWavyDesign(formData.design_variant)} overflow-hidden`}>
-        <div className="absolute inset-0 bg-black/20"></div>
+      <div className={`relative ${getHeaderHeight(formData.design_variant)} ${getThemeGradient(formData.color_theme)} ${getWavyDesign(formData.design_variant)} overflow-hidden`}>
+        <div className="absolute inset-0 bg-black/30"></div>
         
         {/* Company Logo */}
         {formData.company_logo_url && (
@@ -179,7 +191,7 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
         {formData.visible_sections?.contact && (
           <div className="space-y-4 mb-6">
             {formData.phone && (
-              <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+              <a href={`tel:${formData.phone}`} className="flex items-center justify-between bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
                     <Phone className="w-5 h-5 text-white" />
@@ -189,11 +201,12 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
                     <p className="text-xs text-gray-500">mobile</p>
                   </div>
                 </div>
-              </div>
+                <ExternalLink className="w-4 h-4 text-gray-400" />
+              </a>
             )}
 
             {formData.work_phone && (
-              <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+              <a href={`tel:${formData.work_phone}`} className="flex items-center justify-between bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
                     <Phone className="w-5 h-5 text-white" />
@@ -203,11 +216,17 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
                     <p className="text-xs text-gray-500">work</p>
                   </div>
                 </div>
-              </div>
+                <ExternalLink className="w-4 h-4 text-gray-400" />
+              </a>
             )}
 
             {formData.whatsapp && (
-              <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+              <a 
+                href={`https://api.whatsapp.com/send?phone=${formData.whatsapp.replace(/[^\d]/g, '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer"
+              >
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
                     <MessageCircle className="w-5 h-5 text-white" />
@@ -217,11 +236,12 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
                     <p className="text-xs text-gray-500">WhatsApp</p>
                   </div>
                 </div>
-              </div>
+                <ExternalLink className="w-4 h-4 text-gray-400" />
+              </a>
             )}
             
             {formData.email && (
-              <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+              <a href={`mailto:${formData.email}`} className="flex items-center justify-between bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
                     <Mail className="w-5 h-5 text-white" />
@@ -231,21 +251,28 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
                     <p className="text-xs text-gray-500">work</p>
                   </div>
                 </div>
-              </div>
+                <ExternalLink className="w-4 h-4 text-gray-400" />
+              </a>
             )}
 
             {formData.website && (
-              <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+              <a
+                href={formData.website.startsWith('http') ? formData.website : `https://${formData.website}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer"
+              >
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
                     <Globe className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">{formData.website}</p>
+                    <p className="font-medium text-gray-900">{formData.website.replace(/^https?:\/\//, '')}</p>
                     <p className="text-xs text-gray-500">website</p>
                   </div>
                 </div>
-              </div>
+                <ExternalLink className="w-4 h-4 text-gray-400" />
+              </a>
             )}
 
             {formData.address && (
@@ -268,7 +295,12 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
         {formData.visible_sections?.social && (
           <div className="space-y-3 mb-6">
             {formData.linkedin_url && (
-              <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+              <a
+                href={formData.linkedin_url.startsWith('http') ? formData.linkedin_url : `https://${formData.linkedin_url}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer"
+              >
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
                     <Linkedin className="w-5 h-5 text-white" />
@@ -278,11 +310,17 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
                     <p className="text-xs text-gray-500">professional</p>
                   </div>
                 </div>
-              </div>
+                <ExternalLink className="w-4 h-4 text-gray-400" />
+              </a>
             )}
             
             {formData.twitter_url && (
-              <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+              <a
+                href={formData.twitter_url.startsWith('http') ? formData.twitter_url : `https://x.com/${formData.twitter_url.replace('@', '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer"
+              >
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center">
                     <X className="w-5 h-5 text-white" />
@@ -292,11 +330,17 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
                     <p className="text-xs text-gray-500">social</p>
                   </div>
                 </div>
-              </div>
+                <ExternalLink className="w-4 h-4 text-gray-400" />
+              </a>
             )}
 
             {formData.facebook_url && (
-              <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+              <a
+                href={formData.facebook_url.startsWith('http') ? formData.facebook_url : `https://facebook.com/${formData.facebook_url}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer"
+              >
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
                     <Facebook className="w-5 h-5 text-white" />
@@ -306,11 +350,17 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
                     <p className="text-xs text-gray-500">social</p>
                   </div>
                 </div>
-              </div>
+                <ExternalLink className="w-4 h-4 text-gray-400" />
+              </a>
             )}
 
             {formData.instagram_url && (
-              <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+              <a
+                href={formData.instagram_url.startsWith('http') ? formData.instagram_url : `https://instagram.com/${formData.instagram_url.replace('@', '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer"
+              >
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-pink-500 rounded-full flex items-center justify-center">
                     <Instagram className="w-5 h-5 text-white" />
@@ -320,7 +370,8 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
                     <p className="text-xs text-gray-500">social</p>
                   </div>
                 </div>
-              </div>
+                <ExternalLink className="w-4 h-4 text-gray-400" />
+              </a>
             )}
           </div>
         )}
@@ -387,7 +438,13 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
             <h4 className="text-sm font-medium text-gray-900 mb-3">Links</h4>
             <div className="space-y-3">
               {customLinks.map((link, index) => (
-                <div key={index} className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                <a
+                  key={index}
+                  href={link.url.startsWith('http') ? link.url : `https://${link.url}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer"
+                >
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center">
                       <ExternalLink className="w-5 h-5 text-white" />
@@ -398,9 +455,40 @@ const LivePreview = ({ formData, customLinks }: LivePreviewProps) => {
                     </div>
                   </div>
                   <ExternalLink className="w-4 h-4 text-gray-400" />
-                </div>
+                </a>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Gallery Images */}
+        {formData.visible_sections?.images && (
+          <div className="mb-6">
+            {[formData.image_1_url, formData.image_2_url, formData.image_3_url, formData.image_4_url, formData.image_5_url]
+              .filter(Boolean).length > 0 && (
+              <>
+                <h4 className="text-sm font-medium text-gray-900 mb-3">Gallery</h4>
+                <div className="grid grid-cols-2 gap-3">
+                  {[formData.image_1_url, formData.image_2_url, formData.image_3_url, formData.image_4_url, formData.image_5_url]
+                    .filter(Boolean)
+                    .map((imageUrl, index) => (
+                      <a
+                        key={index}
+                        href={imageUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block rounded-lg overflow-hidden hover:scale-105 transition-transform cursor-pointer"
+                      >
+                        <img
+                          src={imageUrl}
+                          alt={`Gallery image ${index + 1}`}
+                          className="w-full h-24 object-cover"
+                        />
+                      </a>
+                    ))}
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
